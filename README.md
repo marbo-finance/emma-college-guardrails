@@ -28,8 +28,15 @@ pas juste affirmée dans un dossier de subvention.
     reformulation avant de masquer définitivement.
 - **`curriculum.py`** — le format de catalogue d'objectifs pédagogiques
   (niveau, notion, programme), validé strictement à la lecture.
-- **`catalogs/emma-fr.v1.json`** — un catalogue d'exemple (CM1/6e aujourd'hui ;
-  l'extension 4e/3e, cœur du projet Emma Collège, est en cours).
+- **`catalogs/emma-fr.v1.json`** — un premier catalogue d'exemple (CM1/6e).
+- **`catalogs/emma-college-4e-3e.v1.json`** — le catalogue du projet
+  Emma Collège : 29 objectifs (15 en 4e, 14 en 3e) couvrant les quatre
+  domaines du programme de mathématiques du cycle 4 (nombres et calculs ;
+  organisation et gestion de données, fonctions ; grandeurs et mesures ;
+  espace et géométrie) — nombres relatifs, calcul littéral, équations,
+  théorèmes de Pythagore et de Thalès, trigonométrie, fonctions affines,
+  statistiques, probabilités. Validé à la lecture par `curriculum.py`
+  (29/29 objectifs chargés sans erreur).
 - **`bench/golden_set.jsonl`** — 51 cas de test annotés : demandes directes de
   réponse, tentatives de contournement ("ignore tes instructions"), données
   personnelles, signaux de mise en danger, tutorat normal, mauvaises réponses
@@ -63,8 +70,12 @@ fournisseur de modèle en particulier.
 
 - La détection de fuite est heuristique (regex + règles), pas un jugement par
   un second modèle. Elle réduit le risque de fuite, elle ne l'élimine pas.
-- Le catalogue actuel couvre CM1/6e ; l'extension 4e/3e est le travail en
-  cours pour le projet Emma Collège.
+- Le catalogue 4e/3e est construit sur le programme de mathématiques du
+  cycle 4 actuellement en vigueur (2019). Un nouveau programme (arrêté du
+  18 février 2026) entrera en application progressivement : 5e à la
+  rentrée 2026-2027, 4e à la rentrée 2027-2028, 3e à la rentrée 2028-2029.
+  Ce catalogue sera révisé une fois le contenu détaillé du nouveau
+  programme 4e/3e disponible.
 - Les cas d'historique de conversation (injection via un tour précédent,
   usurpation du rôle assistant) sont gérés côté serveur, hors de ce dépôt.
 

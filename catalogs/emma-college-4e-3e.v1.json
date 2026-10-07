@@ -1,0 +1,327 @@
+{
+  "catalog_version": "1",
+  "curriculum": "fr",
+  "levels": ["4e", "3e"],
+  "subjects": ["mathematics"],
+  "objectives": [
+    {
+      "id": "4e-math-relatifs-addition-soustraction",
+      "level": "4e",
+      "subject": "mathematics",
+      "title": "Addition et soustraction de nombres relatifs",
+      "expected_notions": [
+        "règle des signes pour l'addition",
+        "transformer une soustraction en addition de l'opposé",
+        "calculer une somme algébrique"
+      ]
+    },
+    {
+      "id": "4e-math-relatifs-multiplication-division",
+      "level": "4e",
+      "subject": "mathematics",
+      "title": "Multiplication et division de nombres relatifs",
+      "expected_notions": [
+        "règle des signes pour la multiplication",
+        "produit de plusieurs facteurs relatifs",
+        "quotient de deux nombres relatifs"
+      ]
+    },
+    {
+      "id": "4e-math-litteral-introduction",
+      "level": "4e",
+      "subject": "mathematics",
+      "title": "Introduction au calcul littéral",
+      "expected_notions": [
+        "une lettre représente un nombre",
+        "substituer une valeur dans une expression",
+        "écrire une expression à partir d'un énoncé"
+      ]
+    },
+    {
+      "id": "4e-math-litteral-distributivite",
+      "level": "4e",
+      "subject": "mathematics",
+      "title": "Développer une expression avec la distributivité simple",
+      "expected_notions": [
+        "k fois (a plus b) égale k fois a plus k fois b",
+        "réduire une expression littérale",
+        "supprimer des parenthèses précédées d'un signe moins"
+      ]
+    },
+    {
+      "id": "4e-math-equations-premier-degre",
+      "level": "4e",
+      "subject": "mathematics",
+      "title": "Résoudre une équation du premier degré à une inconnue",
+      "expected_notions": [
+        "notion de solution d'une équation",
+        "ajouter ou soustraire un même nombre aux deux membres",
+        "multiplier ou diviser les deux membres par un même nombre non nul"
+      ]
+    },
+    {
+      "id": "4e-math-puissances",
+      "level": "4e",
+      "subject": "mathematics",
+      "title": "Puissances d'un nombre et écriture scientifique simple",
+      "expected_notions": [
+        "puissance d'exposant entier positif",
+        "produit et quotient de puissances de même base",
+        "ordre de grandeur d'un nombre"
+      ]
+    },
+    {
+      "id": "4e-math-fractions-operations",
+      "level": "4e",
+      "subject": "mathematics",
+      "title": "Addition, soustraction et multiplication de fractions",
+      "expected_notions": [
+        "mettre au même dénominateur",
+        "multiplier deux fractions entre elles",
+        "simplifier une fraction"
+      ]
+    },
+    {
+      "id": "4e-math-proportionnalite",
+      "level": "4e",
+      "subject": "mathematics",
+      "title": "Reconnaître et traiter une situation de proportionnalité",
+      "expected_notions": [
+        "coefficient de proportionnalité",
+        "produit en croix",
+        "quatrième proportionnelle"
+      ]
+    },
+    {
+      "id": "4e-math-pourcentages",
+      "level": "4e",
+      "subject": "mathematics",
+      "title": "Calculer et appliquer un pourcentage",
+      "expected_notions": [
+        "pourcentage d'une quantité",
+        "augmentation et diminution en pourcentage",
+        "lien entre pourcentage et proportionnalité"
+      ]
+    },
+    {
+      "id": "4e-math-statistiques-moyenne",
+      "level": "4e",
+      "subject": "mathematics",
+      "title": "Calculer une moyenne et lire un effectif ou une fréquence",
+      "expected_notions": [
+        "moyenne d'une série de données",
+        "effectif et effectif total",
+        "fréquence d'une valeur"
+      ]
+    },
+    {
+      "id": "4e-math-aires-volumes",
+      "level": "4e",
+      "subject": "mathematics",
+      "title": "Calculer l'aire et le volume de solides usuels",
+      "expected_notions": [
+        "aire d'un disque, d'un parallélogramme",
+        "volume d'un prisme droit, d'un cylindre",
+        "effet d'un agrandissement ou d'une réduction sur une aire ou un volume"
+      ]
+    },
+    {
+      "id": "4e-math-pythagore",
+      "level": "4e",
+      "subject": "mathematics",
+      "title": "Théorème de Pythagore et calcul de longueur",
+      "expected_notions": [
+        "relation entre les côtés d'un triangle rectangle",
+        "calculer la longueur de l'hypoténuse",
+        "calculer la longueur d'un côté de l'angle droit"
+      ]
+    },
+    {
+      "id": "4e-math-thales-introduction",
+      "level": "4e",
+      "subject": "mathematics",
+      "title": "Introduction à la configuration de Thalès",
+      "expected_notions": [
+        "droites parallèles et triangles emboîtés",
+        "calculer une longueur manquante",
+        "reconnaître une configuration de Thalès"
+      ]
+    },
+    {
+      "id": "4e-math-cosinus-triangle-rectangle",
+      "level": "4e",
+      "subject": "mathematics",
+      "title": "Cosinus d'un angle aigu dans un triangle rectangle",
+      "expected_notions": [
+        "côté adjacent et hypoténuse",
+        "calculer un cosinus",
+        "calculer une longueur ou un angle à partir du cosinus"
+      ]
+    },
+    {
+      "id": "4e-math-symetrie-translation",
+      "level": "4e",
+      "subject": "mathematics",
+      "title": "Symétrie centrale et translation",
+      "expected_notions": [
+        "construire le symétrique d'une figure par rapport à un point",
+        "propriétés conservées par la symétrie centrale",
+        "construire l'image d'une figure par translation"
+      ]
+    },
+    {
+      "id": "3e-math-identites-remarquables",
+      "level": "3e",
+      "subject": "mathematics",
+      "title": "Identités remarquables et factorisation",
+      "expected_notions": [
+        "développer (a plus b) au carré et (a moins b) au carré",
+        "développer (a plus b)(a moins b)",
+        "factoriser une expression à l'aide d'un facteur commun"
+      ]
+    },
+    {
+      "id": "3e-math-racines-carrees",
+      "level": "3e",
+      "subject": "mathematics",
+      "title": "Racines carrées et simplification",
+      "expected_notions": [
+        "définition de la racine carrée d'un nombre positif",
+        "simplifier une racine carrée",
+        "utiliser une racine carrée dans un calcul de longueur"
+      ]
+    },
+    {
+      "id": "3e-math-puissances-ecriture-scientifique",
+      "level": "3e",
+      "subject": "mathematics",
+      "title": "Puissances d'exposant négatif et écriture scientifique",
+      "expected_notions": [
+        "puissance d'exposant négatif ou nul",
+        "écrire un nombre en notation scientifique",
+        "comparer des ordres de grandeur"
+      ]
+    },
+    {
+      "id": "3e-math-equations-inequations",
+      "level": "3e",
+      "subject": "mathematics",
+      "title": "Résoudre une équation ou une inéquation du premier degré",
+      "expected_notions": [
+        "résoudre une équation avec l'inconnue des deux côtés",
+        "résoudre une inéquation du premier degré",
+        "représenter une solution sur une droite graduée"
+      ]
+    },
+    {
+      "id": "3e-math-facteurs-premiers-fractions",
+      "level": "3e",
+      "subject": "mathematics",
+      "title": "Décomposition en facteurs premiers et fraction irréductible",
+      "expected_notions": [
+        "décomposer un entier en produit de facteurs premiers",
+        "rendre une fraction irréductible",
+        "déterminer un PGCD simple"
+      ]
+    },
+    {
+      "id": "3e-math-fonctions-notion",
+      "level": "3e",
+      "subject": "mathematics",
+      "title": "Notion de fonction, image et antécédent",
+      "expected_notions": [
+        "une fonction associe un nombre à un autre nombre",
+        "vocabulaire image et antécédent",
+        "lire un tableau de valeurs ou une représentation graphique"
+      ]
+    },
+    {
+      "id": "3e-math-fonction-lineaire-affine",
+      "level": "3e",
+      "subject": "mathematics",
+      "title": "Fonction linéaire et fonction affine",
+      "expected_notions": [
+        "fonction linéaire et coefficient de proportionnalité",
+        "fonction affine et droite dans un repère",
+        "déterminer une expression à partir de deux points"
+      ]
+    },
+    {
+      "id": "3e-math-statistiques-mediane",
+      "level": "3e",
+      "subject": "mathematics",
+      "title": "Médiane, étendue et lecture de diagrammes statistiques",
+      "expected_notions": [
+        "déterminer la médiane d'une série",
+        "calculer l'étendue d'une série",
+        "comparer deux séries de données"
+      ]
+    },
+    {
+      "id": "3e-math-probabilites",
+      "level": "3e",
+      "subject": "mathematics",
+      "title": "Calculer une probabilité dans une expérience aléatoire simple",
+      "expected_notions": [
+        "issue d'une expérience aléatoire",
+        "probabilité comme fréquence attendue",
+        "probabilités d'évènements contraires"
+      ]
+    },
+    {
+      "id": "3e-math-grandeurs-composees",
+      "level": "3e",
+      "subject": "mathematics",
+      "title": "Grandeurs composées et conversions",
+      "expected_notions": [
+        "vitesse moyenne, distance, durée",
+        "débit et masse volumique",
+        "convertir une unité composée"
+      ]
+    },
+    {
+      "id": "3e-math-thales-reciproque",
+      "level": "3e",
+      "subject": "mathematics",
+      "title": "Théorème de Thalès et sa réciproque",
+      "expected_notions": [
+        "calculer une longueur avec le théorème de Thalès",
+        "utiliser la réciproque pour démontrer un parallélisme",
+        "reconnaître la configuration adaptée"
+      ]
+    },
+    {
+      "id": "3e-math-trigonometrie",
+      "level": "3e",
+      "subject": "mathematics",
+      "title": "Trigonométrie dans le triangle rectangle",
+      "expected_notions": [
+        "cosinus, sinus et tangente d'un angle aigu",
+        "calculer une longueur à partir d'un angle",
+        "calculer un angle à partir de deux longueurs"
+      ]
+    },
+    {
+      "id": "3e-math-pythagore-reciproque",
+      "level": "3e",
+      "subject": "mathematics",
+      "title": "Réciproque du théorème de Pythagore",
+      "expected_notions": [
+        "utiliser la réciproque pour démontrer qu'un triangle est rectangle",
+        "comparer le carré du plus grand côté à la somme des carrés des deux autres",
+        "distinguer théorème direct et réciproque"
+      ]
+    },
+    {
+      "id": "3e-math-geometrie-espace",
+      "level": "3e",
+      "subject": "mathematics",
+      "title": "Sections planes de solides et calculs de volume",
+      "expected_notions": [
+        "section d'un cube, d'un cylindre ou d'une pyramide par un plan",
+        "volume d'une pyramide et d'un cône",
+        "effet d'une réduction sur un volume"
+      ]
+    }
+  ]
+}
