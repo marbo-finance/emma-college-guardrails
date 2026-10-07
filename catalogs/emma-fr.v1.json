@@ -1,0 +1,52 @@
+{
+  "catalog_version": "1",
+  "curriculum": "fr",
+  "levels": ["CM1", "6e"],
+  "subjects": ["mathematics"],
+  "objectives": [
+    {
+      "id": "cm1-math-fractions-decouverte",
+      "level": "CM1",
+      "subject": "mathematics",
+      "title": "Découverte des fractions simples",
+      "expected_notions": [
+        "fraction comme part d’un tout",
+        "demi, tiers, quart",
+        "lecture d’une fraction"
+      ]
+    },
+    {
+      "id": "cm1-math-fractions-comparaison",
+      "level": "CM1",
+      "subject": "mathematics",
+      "title": "Comparer et ranger des fractions simples",
+      "expected_notions": [
+        "comparer à un demi",
+        "fractions de même dénominateur",
+        "placer une fraction sur une droite graduée"
+      ]
+    },
+    {
+      "id": "6e-math-nombres-relatifs-intro",
+      "level": "6e",
+      "subject": "mathematics",
+      "title": "Introduction aux nombres relatifs",
+      "expected_notions": [
+        "nombres positifs et négatifs",
+        "repérage sur une droite graduée",
+        "notion d’opposé"
+      ]
+    },
+    {
+      "id": "6e-math-nombres-relatifs-comparaison",
+      "level": "6e",
+      "subject": "mathematics",
+      "title": "Comparer des nombres relatifs",
+      "expected_notions": [
+        "ordre des nombres relatifs",
+        "utiliser les signes inférieur et supérieur",
+        "encadrer un nombre relatif"
+      ]
+    }
+  ]
+}
