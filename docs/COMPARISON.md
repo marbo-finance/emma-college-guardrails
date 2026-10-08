@@ -25,6 +25,22 @@ Emma Collège is **not** a tutoring product. It is the open, testable **rules la
 3. **Disability handling designed as preferences, not diagnoses** (GDPR art. 9), with deterministic text checks and a speech-ready rendering of maths. See `docs/ACCESSIBILITY.md`.
 4. **Model-agnostic by construction**: no provider code in the safety path.
 
+## Public code we looked at (2026-10-08, read-only)
+
+[V] = verified from the repository text; code was **not executed**. "Not found" means our queries found nothing, not that none exists.
+
+| Project | Public code | Licence | What the code does | Leak control / tests / accessibility (as visible in the repo) |
+|---|---|---|---|---|
+| DinoBot (Édu-Up 2025) | `Ouiactive/dinobot`: a README of one line, last push 2023 [V] | none | nothing usable; no proven link with the funded product | not found |
+| MathPower, Édumalin, AccessDoc, Logbook, Mathia, Adaptiv'Math | not found | n/a | n/a | n/a |
+| Vittascience | `vittascience` org, 26 repos [V] | AGPL-3.0 (platform) | education platform; we did not locate a tutor module | not assessed |
+| Sésamath / Coopmaths (MathALÉA, Sésaparcours) | forge.apps.education.fr [V] | AGPL-3.0 | exercise generators and engines, not LLM tutors | tests on their code; no LLM leak control |
+| PRISME Bot (forge, `applis_maths_sciences`) | yes [V], last commit 2026-09 | none | maths/physics tutor calling a hosted LLM API | guardrails written **in the prompt** ("never the final result"), regex insistence detection, ARIA-aware UI, GDPR audit of CDNs; no tests, no corpus |
+| small student/individual tutors (`tuteur-maths-ia-socratique`, `zimdinos/tuteur-maths`…) | yes [V] | none | "socratic" claims | no verifiable mechanism, no tests |
+
+What this says, honestly: **"never give the answer" and accessibility are not, by themselves, differentiators** — several projects claim them. What we could not find elsewhere: deterministic output checks in code, an executable corpus with published failures, licences that allow reuse. We cannot speak for closed products.
+Note: Sésamath/Coopmaths code is AGPL-3.0; any coupling with it must respect that licence.
+
 ## What it is not
 
 Not a proof of safety, not an RGAA audit, not validated by practising teachers yet (v0.2). See *Limits* in the README.

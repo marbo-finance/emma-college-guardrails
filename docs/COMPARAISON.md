@@ -28,3 +28,19 @@ Emma Collège n'est **pas** un produit de tutorat. C'est la **couche de règles*
 ## Ce que ce n'est pas
 
 Ni une preuve de sécurité, ni un audit RGAA, ni une version validée par des enseignants en exercice (v0.2). Voir *Limites* dans le README.
+
+## Code public examiné (08/10/2026, lecture seule)
+
+[V] = vérifié dans le texte du dépôt ; le code n'a **pas** été exécuté. « Non trouvé » = nos requêtes n'ont rien donné, pas qu'il n'existe rien.
+
+| Projet | Code public | Licence | Ce que fait le code | Contrôle de fuite / tests / accessibilité (visibles dans le dépôt) |
+|---|---|---|---|---|
+| DinoBot (Édu-Up 2025) | `Ouiactive/dinobot` : un README d'une ligne, dernier push 2023 [V] | aucune | rien d'exploitable ; lien avec le produit financé non démontré | non trouvé |
+| MathPower, Édumalin, AccessDoc, Logbook, Mathia, Adaptiv'Math | non trouvé | n/a | n/a | n/a |
+| Vittascience | organisation `vittascience`, 26 dépôts [V] | AGPL-3.0 (plateforme) | plateforme éducative ; module tuteur non localisé | non évalué |
+| Sésamath / Coopmaths (MathALÉA, Sésaparcours) | forge.apps.education.fr [V] | AGPL-3.0 | générateurs et moteurs d'exercices, pas des tuteurs LLM | tests sur leur code ; pas de contrôle de fuite LLM |
+| PRISME Bot (forge, `applis_maths_sciences`) | oui [V], dernier commit 09/2026 | aucune | tuteur maths/physique-chimie appelant une API LLM hébergée | garde-fous écrits **dans le prompt** (« jamais le résultat final »), détection d'insistance par regex, interface avec ARIA, audit RGPD des CDN ; ni tests ni corpus |
+| petits tuteurs d'élèves ou individuels (`tuteur-maths-ia-socratique`, `zimdinos/tuteur-maths`…) | oui [V] | aucune | revendiquent le « socratique » | aucun mécanisme vérifiable, aucun test |
+
+Ce que cela dit, honnêtement : **« ne pas donner la réponse » et l'accessibilité ne suffisent pas, seuls, à nous distinguer** — plusieurs projets les revendiquent. Ce que nous n'avons pas trouvé ailleurs : des contrôles de sortie déterministes dans le code, un corpus exécutable avec ses échecs publiés, des licences permettant la réutilisation. Nous ne pouvons pas parler des produits fermés.
+Note : le code Sésamath/Coopmaths est en AGPL-3.0 ; tout couplage doit respecter cette licence.

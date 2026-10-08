@@ -105,8 +105,8 @@ claim** that others lack protections; their code is not public so we cannot
 compare. What this repository adds, and what you can verify yourself:
 
 1. **Executable and open** — rules, equivalence engine, corpus and bench are
-   public and run offline. No Édu-Up laureate we found publishes comparable
-   code ([docs/COMPARISON.md](docs/COMPARISON.md), with sources and limits).
+   public and run offline. Of the Édu-Up laureates and French open-source maths tutors we looked at,
+   none publishes comparable code ([docs/COMPARISON.md](docs/COMPARISON.md), with sources and limits).
 2. **Grade 8–9 curriculum-aligned test corpus** — 29 objectives
    (`catalogs/emma-college-4e-3e.v1.json`) covering relative numbers,
    literal calculus, equations, Pythagoras/Thalès, trigonometry, remarkable
