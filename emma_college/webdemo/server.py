@@ -24,6 +24,14 @@ MAX_BODY = 64 * 1024
 _FALLBACK_PROFILES = [{"name": "default", "label_fr": "Standard", "label_en": "Standard"}]
 
 
+def _curriculum(text, lang):
+    try:
+        from .. import curriculum
+        return curriculum.classify(text).as_dict(lang)
+    except Exception:
+        return None
+
+
 def _profiles():
     try:
         from .. import access
@@ -193,7 +201,9 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/api/check":
             res = h.check(student, str(req.get("reply") or ""), ex,
                           (str(req["attempt"]) if req.get("attempt") else None))
-            return self._json(200, res.as_dict())
+            d = res.as_dict()
+            d["curriculum"] = _curriculum(ex["statement"] + " " + student, lang)
+            return self._json(200, d)
         if self.path == "/api/chat":
             pre = h.pre(student)
             if pre.block_model_call:
@@ -209,6 +219,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(502, {"error": str(e)})
             res = h.check(student, raw, ex)
             d = res.as_dict()
+            d["curriculum"] = _curriculum(ex["statement"] + " " + student, lang)
             d["verdicts"] = pre.verdicts + [v for v in d["verdicts"] if v not in pre.verdicts]
             return self._json(200, d)
         self._json(404, {"error": "not found"})

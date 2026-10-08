@@ -76,6 +76,14 @@ reported separately. Corpus format and annotation protocol:
 (didactics of mathematics, EIAH/tutoring, accessibility) to challenge the
 corpus and the metrics.
 
+## Curriculum grounding (grades 8–9)
+
+`emma_college.curriculum` encodes the official French cycle-4 maths programme (BOEN n°31,
+30-7-2020): 14 themes with their year (4e/3e), lycée-level notions flagged as out of scope,
+and a system-prompt addendum that keeps any tutor model inside the collège frame. The hosted
+API returns the detected themes with every check (`curriculum` field). Deterministic,
+keyword-based, and it only reports — it never blocks.
+
 ## Works with any LLM
 
 The harness sits **after** the model, so it does not care which one you use.

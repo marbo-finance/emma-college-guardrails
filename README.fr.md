@@ -135,6 +135,14 @@ Authentification par jeton (haché), une seule origine CORS autorisée, limites 
 modèle/jour), aucun contenu journalisé. Les profils d'élèves créés par l'enseignant sont envoyés avec la requête et
 jamais stockés. À placer derrière HTTPS.
 
+## Ancrage au programme (4e/3e)
+
+`emma_college.curriculum` encode le programme officiel de mathématiques du cycle 4 (BOEN
+n°31 du 30-7-2020) : 14 thèmes avec leur niveau (4e/3e), les notions de lycée signalées
+hors programme, et un ajout au prompt système qui maintient n'importe quel modèle tuteur
+dans le cadre du collège. L'API hébergée renvoie les thèmes détectés à chaque vérification
+(champ `curriculum`). Déterministe, par mots-clés, et purement informatif — jamais bloquant.
+
 ## Ce qui nous différencie
 
 Édu-Up a déjà soutenu des tuteurs de maths socratiques (par exemple DinoBot,

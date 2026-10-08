@@ -136,6 +136,11 @@ class Harness:
             {"language": self.lang, "age_range": "13-15",
              "curriculum": "FR-cycle4 (4e/3e) mathématiques",
              "policy": {"hints_not_answers": True}})
+        try:
+            from . import curriculum
+            text += "\n" + curriculum.prompt_addendum(self.lang)
+        except Exception:
+            pass
         if self._adapted():
             try:
                 from . import access
