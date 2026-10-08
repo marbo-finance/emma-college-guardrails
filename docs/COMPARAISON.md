@@ -44,3 +44,6 @@ Ni une preuve de sécurité, ni un audit RGAA, ni une version validée par des e
 
 Ce que cela dit, honnêtement : **« ne pas donner la réponse » et l'accessibilité ne suffisent pas, seuls, à nous distinguer** — plusieurs projets les revendiquent. Ce que nous n'avons pas trouvé ailleurs : des contrôles de sortie déterministes dans le code, un corpus exécutable avec ses échecs publiés, des licences permettant la réutilisation. Nous ne pouvons pas parler des produits fermés.
 Note : le code Sésamath/Coopmaths est en AGPL-3.0 ; tout couplage doit respecter cette licence.
+
+### Décisions Édu-Up lisibles sur la page officielle (vérifié le 08/10/2026 dans un navigateur)
+Parmi les ressources soutenues pertinentes en maths : **Dinobot** (« socratique », 2025), **IA du prof** (2026 ; tuteur sur LLM Mistral paramétré par l'enseignant, traces anonymes), **Eliott Enseignant** (2026 ; « sans jamais faire à la place de l'élève ») et, côté accessibilité, **Natbraille 3.0** (éditeur braille mathématique), **DERi School**, **Néro & Sci Éducation** (statistiques/probabilités handi-accessibles avec un IREM). Leurs descriptions sont sur la page officielle ; nous n'avons vu ni leur code ni leurs contrôles. Notre affirmation n'est donc pas « premier » mais « ouvert, exécutable et mesurable ».

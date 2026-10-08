@@ -44,3 +44,6 @@ Note: Sésamath/Coopmaths code is AGPL-3.0; any coupling with it must respect th
 ## What it is not
 
 Not a proof of safety, not an RGAA audit, not validated by practising teachers yet (v0.2). See *Limits* in the README.
+
+### Édu-Up decisions we could read on the official page (checked 2026-10-08 in a browser)
+Maths-relevant supported AI resources include **Dinobot** ("socratic", 2025), **IA du prof** (2026; tutor on a Mistral LLM set up by the teacher, anonymous traces), **Eliott Enseignant** (2026; "never doing the pupil's work") and, in accessibility, **Natbraille 3.0** (math braille editor), **DERi School**, **Néro & Sci Éducation** (handi-accessible stats/probability with an IREM). Their descriptions are on the official page; we have not seen their code or their checks. Our claim is therefore not "first" but "open, executable and measurable".
