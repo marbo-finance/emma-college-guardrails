@@ -6,7 +6,7 @@ authors:
   - name: "MARBO FINANCE"
     city: Massy
     country: FR
-version: 0.2.0
+version: 0.2.1
 license: Apache-2.0
 repository-code: "https://github.com/marbo-finance/emma-college-guardrails"
 keywords: [education, mathematics, tutoring, LLM, safety, accessibility]

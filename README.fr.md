@@ -102,6 +102,25 @@ mesuré les contrôles sur des réponses fixes ; les taux de fuite par modèle n
 sont pas encore publiés — faire tourner le banc sur le modèle de votre choix
 est l'un des retours que nous espérons des chercheurs.
 
+## Fichiers de profils d'élèves (enseignants)
+
+Un enseignant décrit un groupe d'élèves par des **besoins et préférences** (jamais par une pathologie) dans un petit fichier JSON — le
+[portail Emma](https://emma.talki-app.fr/profils-eleves.html) propose un constructeur, ou écrivez-le à la main :
+
+```json
+{"schema": "emma-pupil-profile/1",
+ "profiles": [{"name": "groupe-a", "label": "Groupe A : voix + une étape",
+               "base": ["lecture_vocale", "une_etape_a_la_fois"],
+               "overrides": {"max_sentence_words": 10}}]}
+```
+
+```bash
+python3 -m emma_college serve --profiles mes-profils.json     # puis le choisir dans le banc
+python3 -m emma_college check --profiles mes-profils.json --profile groupe-a --reply "..." ...
+```
+
+Un libellé qui ressemble à un diagnostic ou à un terme de santé est **refusé** (RGPD art. 9), les champs inconnus sont refusés, rien n'est conservé.
+
 ## Ce qui nous différencie
 
 Édu-Up a déjà soutenu des tuteurs de maths socratiques (par exemple DinoBot,

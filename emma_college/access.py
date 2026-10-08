@@ -20,6 +20,7 @@ __all__ = [
     "Profile", "PROFILES", "NEEDS", "Finding", "AdaptedReply", "fr_number", "en_number",
     "number_to_words", "spoken_math", "to_mathml", "lint", "adapt", "profile_prompt_addendum",
     "explain_profile", "combine_profiles", "get_profile",
+    "profile_from_dict", "load_profiles_file", "ProfileFileError", "SCHEMA",
 ]
 
 # ---------------------------------------------------------------------------
@@ -1554,3 +1555,98 @@ def explain_profile(profile: Union[Profile, str], lang: str = "fr") -> str:
             lines.append("No emoji." if p.limit_emoji == 0 else f"At most {p.limit_emoji} emoji.")
         lines.append("The pedagogical contract is unchanged: hints, never the final answer.")
     return " ".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# Custom pupil profiles (JSON file written by the teacher, e.g. from the portal)
+# ---------------------------------------------------------------------------
+
+SCHEMA = "emma-pupil-profile/1"
+_OVERRIDE_KEYS = {
+    "max_sentence_words": (int, type(None)), "max_steps_per_reply": (int, type(None)),
+    "forbid_figurative": (bool,), "forbid_time_pressure": (bool,),
+    "spoken_math": (bool,), "limit_symbols": (bool,), "limit_emoji": (int, type(None)),
+}
+# Health data is special-category data (GDPR art. 9): a profile states needs, never conditions.
+_DIAGNOSIS = re.compile(
+    r"dyslex|dysortho|dyscalc|dyspra|dysgraph|\bdys\b|autis|\btsa\b|\btdah?\b|\badhd\b|"
+    r"\bhpi\b|asperger|handicap|trouble|disorder|syndrom|aveugle|blind|sourd|\bdeaf\b|"
+    r"malvoyant|dyslexi|autism|surdit|cécit|diagnos|mdph|\bpap\b|\bpps\b|\bpai\b", re.IGNORECASE)
+
+
+class ProfileFileError(ValueError):
+    """The profile file is invalid (shape, unknown key, or diagnosis-like text)."""
+
+
+def _clean_text(value: object, field: str, max_len: int = 40) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise ProfileFileError(f"{field}: a short text is required")
+    value = value.strip()
+    if len(value) > max_len:
+        raise ProfileFileError(f"{field}: at most {max_len} characters")
+    if _DIAGNOSIS.search(value):
+        raise ProfileFileError(f"{field}: looks like a diagnosis or health term; describe a need or a "
+                               "preference instead (GDPR art. 9: no health data)")
+    return value
+
+
+def profile_from_dict(d: dict) -> Profile:
+    """Build a profile from ``{"name", "label", "base": [named profiles], "overrides": {...}}``."""
+    if not isinstance(d, dict):
+        raise ProfileFileError("a profile must be an object")
+    unknown = set(d) - {"name", "label", "base", "overrides"}
+    if unknown:
+        raise ProfileFileError(f"unknown field(s): {', '.join(sorted(unknown))}")
+    name = _clean_text(d.get("name"), "name", 30)
+    if not re.fullmatch(r"[A-Za-z0-9_-]{1,30}", name):
+        raise ProfileFileError("name: letters, digits, '-' and '_' only")
+    if name in PROFILES:
+        raise ProfileFileError(f"name {name!r} is already a built-in profile")
+    label = _clean_text(d.get("label", name), "label", 40)
+    base = d.get("base", [])
+    if not isinstance(base, list) or not all(isinstance(b, str) for b in base):
+        raise ProfileFileError("base: a list of built-in profile names")
+    for b in base:
+        if b not in PROFILES:
+            raise ProfileFileError(f"base: unknown built-in profile {b!r}")
+    merged = combine_profiles(base, name=name) if base else PROFILES["default"]
+    ov = d.get("overrides", {})
+    if not isinstance(ov, dict):
+        raise ProfileFileError("overrides: an object")
+    changes: dict = {}
+    for k, v in ov.items():
+        if k not in _OVERRIDE_KEYS:
+            raise ProfileFileError(f"overrides: unknown key {k!r}")
+        if not isinstance(v, _OVERRIDE_KEYS[k]) or (isinstance(v, bool) and bool not in _OVERRIDE_KEYS[k]):
+            raise ProfileFileError(f"overrides.{k}: wrong type")
+        if isinstance(v, int) and not isinstance(v, bool) and not (0 <= v <= 60):
+            raise ProfileFileError(f"overrides.{k}: expected 0..60")
+        changes[k] = v
+    from dataclasses import replace
+    return replace(merged, name=name, label_fr=label, label_en=label, **changes)
+
+
+def load_profiles_file(path: str, register: bool = True) -> dict:
+    """Read a JSON file ``{"schema": "emma-pupil-profile/1", "profiles": [...]}``.
+
+    With ``register=True`` the profiles become usable by name (harness, CLI, web bench)."""
+    import json
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, ValueError) as e:
+        raise ProfileFileError(f"cannot read {path}: {e}") from None
+    if not isinstance(data, dict) or data.get("schema") != SCHEMA:
+        raise ProfileFileError(f"expected schema {SCHEMA!r}")
+    items = data.get("profiles")
+    if not isinstance(items, list) or not (1 <= len(items) <= 60):
+        raise ProfileFileError("profiles: a list of 1 to 60 profiles")
+    out = {}
+    for d in items:
+        p = profile_from_dict(d)
+        if p.name in out:
+            raise ProfileFileError(f"duplicate name {p.name!r}")
+        out[p.name] = p
+    if register:
+        PROFILES.update(out)
+    return out

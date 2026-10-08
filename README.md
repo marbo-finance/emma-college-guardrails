@@ -97,6 +97,25 @@ provider and measured the checks on fixed replies; per-model leak rates are
 not yet published — running the bench on your model of choice is one of the
 things we would like researchers to do.
 
+## Pupil profile files (teachers)
+
+A teacher can describe a group of pupils by **needs and preferences** (never by condition) in a small JSON file — the
+[Emma portal](https://emma.talki-app.fr/en/pupil-profiles.html) has a builder, or write it by hand:
+
+```json
+{"schema": "emma-pupil-profile/1",
+ "profiles": [{"name": "group-a", "label": "Group A: voice + one step",
+               "base": ["lecture_vocale", "une_etape_a_la_fois"],
+               "overrides": {"max_sentence_words": 10}}]}
+```
+
+```bash
+python3 -m emma_college serve --profiles my-profiles.json     # then pick it in the bench
+python3 -m emma_college check --profiles my-profiles.json --profile group-a --reply "..." ...
+```
+
+Labels that look like a diagnosis or health term are **refused** (GDPR art. 9), unknown fields are refused, nothing is stored.
+
 ## What makes this different
 
 Édu-Up already supported socratic maths tutors (e.g. DinoBot, which states

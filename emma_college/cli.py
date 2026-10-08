@@ -108,7 +108,17 @@ def main(argv=None) -> int:
     sv.add_argument("--host", default="127.0.0.1")
     sv.add_argument("--port", type=int, default=8765)
 
+    for sp in (c, ch, sv):
+        sp.add_argument("--profiles", help="JSON file of pupil profiles (schema emma-pupil-profile/1)")
     a = ap.parse_args(argv)
+    if getattr(a, "profiles", None):
+        from . import access
+        try:
+            loaded = access.load_profiles_file(a.profiles)
+        except access.ProfileFileError as e:
+            print(f"profiles: {e}", file=sys.stderr)
+            return 2
+        print(f"profiles loaded: {', '.join(loaded)}", file=sys.stderr)
     if a.cmd == "bench":
         from .bench import main as bench_main
         return bench_main(a.rest)
