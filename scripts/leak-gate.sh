@@ -1,10 +1,10 @@
 #!/bin/bash
 # Contrôle avant push public. Usage : leak-gate.sh <plage-de-commits>
-# Exige EMMA_LEAK_DENYLIST : fichier de regex tenu HORS du dépôt.
+# Liste de regex tenue HORS du dépôt : EMMA_LEAK_DENYLIST, par défaut ~/.emma/leak-denylist.txt.
 # Sortie : 0 = propre, 1 = terme trouvé, 2 = erreur (jamais masquée).
 set -u
-: "${EMMA_LEAK_DENYLIST:?leak-gate: variable EMMA_LEAK_DENYLIST non définie}"
-[ -f "$EMMA_LEAK_DENYLIST" ] || { echo "leak-gate: liste introuvable"; exit 2; }
+EMMA_LEAK_DENYLIST="${EMMA_LEAK_DENYLIST:-$HOME/.emma/leak-denylist.txt}"
+[ -f "$EMMA_LEAK_DENYLIST" ] || { echo "leak-gate: liste introuvable ($EMMA_LEAK_DENYLIST)"; exit 2; }
 RANGE="${1:?leak-gate: plage de commits requise}"
 ROOT=$(git rev-parse --show-toplevel) || exit 2
 cd "$ROOT" || exit 2
