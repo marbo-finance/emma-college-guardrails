@@ -97,6 +97,19 @@ provider and measured the checks on fixed replies; per-model leak rates are
 not yet published — running the bench on your model of choice is one of the
 things we would like researchers to do.
 
+## Hosted trial server (no install for testers)
+
+For teachers and researchers who should not install anything, run the same demo as a token-gated API and let
+a static page call it (see `emma.talki-app.fr/testeurs.html`):
+
+```bash
+python3 -m emma_college token "jane-doe" --file tokens.json     # prints the token once; only its hash is stored
+python3 -m emma_college serve --tokens tokens.json --cors-origin https://your.site --rate 30 --chat-per-day 200
+```
+
+Bearer-token auth (hashed at rest), one allowed CORS origin, per-token rate and daily model-call caps, no content
+logged. Teacher-built pupil profiles are sent inline per request and never stored. Put it behind HTTPS yourself.
+
 ## Pupil profile files (teachers)
 
 A teacher can describe a group of pupils by **needs and preferences** (never by condition) in a small JSON file — the

@@ -121,6 +121,20 @@ python3 -m emma_college check --profiles mes-profils.json --profile groupe-a --r
 
 Un libellé qui ressemble à un diagnostic ou à un terme de santé est **refusé** (RGPD art. 9), les champs inconnus sont refusés, rien n'est conservé.
 
+## Serveur d'essai hébergé (rien à installer pour les testeurs)
+
+Pour des enseignants ou chercheurs qui ne doivent rien installer, la même démo peut tourner comme API à jeton,
+appelée par une page statique (voir `emma.talki-app.fr/testeurs.html`) :
+
+```bash
+python3 -m emma_college token "jeanne-dupont" --file tokens.json   # affiche le jeton une fois ; seul son hash est stocké
+python3 -m emma_college serve --tokens tokens.json --cors-origin https://votre.site --rate 30 --chat-per-day 200
+```
+
+Authentification par jeton (haché), une seule origine CORS autorisée, limites par jeton (requêtes/minute, appels
+modèle/jour), aucun contenu journalisé. Les profils d'élèves créés par l'enseignant sont envoyés avec la requête et
+jamais stockés. À placer derrière HTTPS.
+
 ## Ce qui nous différencie
 
 Édu-Up a déjà soutenu des tuteurs de maths socratiques (par exemple DinoBot,
