@@ -27,7 +27,7 @@ class TestPupilProfileFile(unittest.TestCase):
         self.assertTrue(p.spoken_math)
 
     def test_diagnosis_like_label_is_refused(self):
-        for bad in ("dyslexie", "Élève TDAH", "autisme léger", "student with ADHD", "handicap visuel"):
+        for bad in ("dyslexie", "Élève TDAH", "autisme léger", "student with ADHD", "handicap visuel", "TDAH_élève", "élève-dys"):
             with self.assertRaises(ProfileFileError, msg=bad):
                 profile_from_dict({"name": "t-b", "label": bad, "base": []})
 

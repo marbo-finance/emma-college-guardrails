@@ -1584,7 +1584,7 @@ def _clean_text(value: object, field: str, max_len: int = 40) -> str:
     value = value.strip()
     if len(value) > max_len:
         raise ProfileFileError(f"{field}: at most {max_len} characters")
-    if _DIAGNOSIS.search(value):
+    if _DIAGNOSIS.search(re.sub(r"[_\-./]+", " ", value)):
         raise ProfileFileError(f"{field}: looks like a diagnosis or health term; describe a need or a "
                                "preference instead (GDPR art. 9: no health data)")
     return value
