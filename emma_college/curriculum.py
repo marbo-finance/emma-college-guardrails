@@ -52,7 +52,7 @@ THEMES: tuple = (
     Theme("func", "Fonctions (linéaires, affines)", "Functions (linear, affine)", "3e",
           ("fonction", "image de", "antecedent", "lineaire", "affine", "f(x)")),
     Theme("pyth", "Théorème de Pythagore", "Pythagorean theorem", "4e",
-          ("pythagore", "hypotenuse", "triangle rectangle")),
+          ("pythagore", "hypotenuse", "triangle rectangle", "rectangle en")),
     Theme("thal", "Théorème de Thalès", "Intercept (Thales) theorem", "3e",
           ("thales", "triangles semblables", "agrandissement", "reduction")),
     Theme("trig", "Trigonométrie (cos, sin, tan)", "Trigonometry (cos, sin, tan)", "3e",

@@ -10,6 +10,10 @@ class Classify(unittest.TestCase):
         self.assertIn("pyth", [t.code for t in i.themes])
         self.assertEqual(i.level, "4e")
 
+    def test_rectangle_en_variant_is_4e(self):
+        i = C.classify("Triangle ABC rectangle en A, AB = 6 cm et AC = 8 cm. Calcule BC.")
+        self.assertEqual(i.level, "4e")
+
     def test_thales_trigo_are_3e(self):
         i = C.classify("Avec le théorème de Thalès puis le cosinus de l'angle, calcule la longueur.")
         self.assertEqual({t.code for t in i.themes} & {"thal", "trig"}, {"thal", "trig"})
