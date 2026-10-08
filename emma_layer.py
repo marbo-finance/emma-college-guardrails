@@ -781,6 +781,19 @@ def guard_output(user_input, candidate_output, tenant):
         out = _mask_spans(out, spans, lang)
         if "block" not in verdicts:
             verdicts.append("block")
+    # v0.2: exact-equivalence engine for 4e/3e maths (fractions, relative
+    # numbers, equations, radicals, polynomials…) on top of the legacy pass.
+    try:
+        from emma_college import leak as _math_leak
+        _answers = _math_leak.guess_answers(user_input or "")
+        _leaks = _math_leak.find_leaks(out, _answers, user_input or "")
+        if _leaks:
+            out = _math_leak.mask(out, _leaks, lang)
+            leaked = True
+            if "block" not in verdicts:
+                verdicts.append("block")
+    except ImportError:
+        pass
 
     return {"output": out, "verdicts": verdicts, "leaked": leaked}
 

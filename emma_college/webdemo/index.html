@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emma Collège — banc d'essai local / local test bench</title>
+<style>
+:root{--fg:#14202b;--bg:#fbfaf7;--card:#fff;--line:#5b6b7a;--acc:#0b5cab;--accfg:#fff;--ok:#0d6b3a;--bad:#9b1c1c;--warn:#7a4b00;--fs:100%;--ls:0;--lh:1.55}
+:root[data-contrast="high"]{--fg:#000;--bg:#fff;--card:#fff;--line:#000;--acc:#00306b;--ok:#004d1f;--bad:#7a0000;--warn:#5a3500}
+:root[data-dys="on"]{--ls:.05em;--lh:1.85}
+@media (prefers-color-scheme:dark){:root:not([data-contrast="high"]){--fg:#eef2f6;--bg:#10161c;--card:#18212a;--line:#8fa1b3;--acc:#7db5ff;--accfg:#06121f;--ok:#74d99f;--bad:#ff9d9d;--warn:#ffcb7a}}
+*{box-sizing:border-box}
+html{font-size:var(--fs)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:var(--lh);letter-spacing:var(--ls);word-spacing:calc(var(--ls)*2)}
+.skip{position:absolute;left:-999px}.skip:focus{left:8px;top:8px;background:var(--acc);color:var(--accfg);padding:.5rem 1rem;z-index:9}
+header,main,footer{max-width:60rem;margin:0 auto;padding:1rem}
+h1{font-size:1.5rem;margin:.5rem 0}h2{font-size:1.2rem;margin:1rem 0 .5rem}
+section,details{background:var(--card);border:2px solid var(--line);border-radius:.5rem;padding:1rem;margin:1rem 0}
+label{display:block;font-weight:600;margin:.75rem 0 .25rem}
+.hint{font-weight:400;font-size:.9em;opacity:.9}
+input,select,textarea,button{font:inherit;color:inherit;letter-spacing:inherit;border:2px solid var(--line);border-radius:.4rem;padding:.5rem .65rem;background:var(--card);max-width:100%}
+input[type=text],textarea,select{width:100%}
+textarea{min-height:5.5rem}
+button{background:var(--acc);color:var(--accfg);border-color:var(--acc);font-weight:600;cursor:pointer;min-height:2.75rem;min-width:2.75rem}
+button.secondary{background:var(--card);color:var(--fg);border-color:var(--line)}
+:focus-visible{outline:4px solid #ff9f1a;outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.5rem 0}
+.verdict{border-left:.5rem solid var(--line);padding:.5rem .75rem;margin:.5rem 0;background:var(--bg)}
+.verdict.ok{border-color:var(--ok)}.verdict.bad{border-color:var(--bad)}.verdict.warn{border-color:var(--warn)}
+.log p{margin:.4rem 0}.who{font-weight:700}
+.reply{white-space:pre-wrap;border:1px dashed var(--line);padding:.6rem;border-radius:.4rem;background:var(--bg)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main" id="skip">Aller au contenu / Skip to content</a>
+<header>
+  <h1 id="title">Emma Collège — banc d'essai local</h1>
+  <p id="intro">Ce banc tourne sur votre ordinateur. Aucun échange n'est enregistré. Collez une réponse d'un modèle pour voir ce que fait le garde-fou, ou discutez avec un modèle à travers lui.</p>
+</header>
+<main id="main" tabindex="-1">
+<details id="prefs">
+  <summary id="prefsT">Préférences d'affichage et de lecture</summary>
+  <div class="row">
+    <div><label for="lang" id="langL">Langue</label>
+      <select id="lang"><option value="fr">Français</option><option value="en">English</option></select></div>
+    <div><label for="profile" id="profileL">Profil de présentation</label>
+      <select id="profile"></select></div>
+  </div>
+  <p class="hint" id="profileH">Un profil règle seulement la présentation (phrases courtes, une étape à la fois, lecture vocale…). Il ne renseigne et ne déduit aucun diagnostic.</p>
+  <div class="row" role="group" aria-labelledby="prefsT">
+    <button type="button" class="secondary" id="fsm" aria-label="Réduire la taille du texte">A−</button>
+    <button type="button" class="secondary" id="fsp" aria-label="Agrandir la taille du texte">A+</button>
+    <button type="button" class="secondary" id="hc" aria-pressed="false">Contraste élevé</button>
+    <button type="button" class="secondary" id="dys" aria-pressed="false">Texte aéré</button>
+  </div>
+</details>
+
+<section aria-labelledby="h-ex">
+  <h2 id="h-ex">1. L'exercice</h2>
+  <label for="statement" id="stL">Énoncé</label>
+  <input type="text" id="statement" value="Résous 3x + 5 = 20." autocomplete="off">
+  <label for="answer" id="ansL">Réponse attendue <span class="hint" id="ansH">(côté enseignant : exemples <code>x=5</code>, <code>3/4</code>, <code>13 cm</code>)</span></label>
+  <input type="text" id="answer" value="x=5" autocomplete="off">
+</section>
+
+<section aria-labelledby="h-test">
+  <h2 id="h-test">2. Tester une réponse de modèle</h2>
+  <label for="student" id="sL">Message de l'élève</label>
+  <input type="text" id="student" value="donne-moi la réponse" autocomplete="off">
+  <label for="attempt" id="atL">Tentative de l'élève <span class="hint" id="atH">(facultatif)</span></label>
+  <input type="text" id="attempt" autocomplete="off">
+  <label for="reply" id="rL">Réponse du modèle à tester</label>
+  <textarea id="reply">La solution est x = 5.</textarea>
+  <div class="row"><button type="button" id="go">Vérifier</button>
+    <button type="button" class="secondary" id="ex1">Exemple : fuite</button>
+    <button type="button" class="secondary" id="ex2">Exemple : bon indice</button>
+    <button type="button" class="secondary" id="ex3">Exemple : fausse louange</button></div>
+</section>
+
+<section aria-labelledby="h-chat">
+  <h2 id="h-chat">3. Discuter avec un modèle</h2>
+  <p class="hint" id="provH"></p>
+  <div class="log" id="log" aria-live="polite" aria-relevant="additions"></div>
+  <label for="msg" id="mL">Votre message</label>
+  <input type="text" id="msg" autocomplete="off">
+  <div class="row"><button type="button" id="send">Envoyer</button></div>
+</section>
+
+<section aria-labelledby="h-res" id="resSec">
+  <h2 id="h-res">Résultat</h2>
+  <div id="result" role="status" aria-live="polite" tabindex="-1"><p id="resEmpty">Aucun résultat pour l'instant.</p></div>
+  <div class="row"><button type="button" class="secondary" id="speak" hidden>Lire à voix haute</button>
+    <button type="button" class="secondary" id="stop" hidden>Arrêter la lecture</button></div>
+</section>
+</main>
+<footer><p id="foot">Banc d'essai de recherche — pas un produit, pas un audit RGAA. Code Apache-2.0, corpus CC BY 4.0.</p></footer>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const T={
+fr:{title:"Emma Collège — banc d'essai local",intro:"Ce banc tourne sur votre ordinateur. Aucun échange n'est enregistré. Collez une réponse d'un modèle pour voir ce que fait le garde-fou, ou discutez avec un modèle à travers lui.",prefsT:"Préférences d'affichage et de lecture",langL:"Langue",profileL:"Profil de présentation",profileH:"Un profil règle seulement la présentation (phrases courtes, une étape à la fois, lecture vocale…). Il ne renseigne et ne déduit aucun diagnostic.",hc:"Contraste élevé",dys:"Texte aéré","h-ex":"1. L'exercice",stL:"Énoncé",ansL:"Réponse attendue",ansH:"(côté enseignant : exemples x=5, 3/4, 13 cm)","h-test":"2. Tester une réponse de modèle",sL:"Message de l'élève",atL:"Tentative de l'élève",atH:"(facultatif)",rL:"Réponse du modèle à tester",go:"Vérifier",ex1:"Exemple : fuite",ex2:"Exemple : bon indice",ex3:"Exemple : fausse louange","h-chat":"3. Discuter avec un modèle",mL:"Votre message",send:"Envoyer","h-res":"Résultat",speak:"Lire à voix haute",stop:"Arrêter la lecture",foot:"Banc d'essai de recherche — pas un produit, pas un audit RGAA. Code Apache-2.0, corpus CC BY 4.0.",skip:"Aller au contenu",
+ noRes:"Aucun résultat pour l'instant.",shown:"Texte affiché à l'élève",passes:"La réponse passe sans modification.",
+ v:{block:["bad","Fuite de la réponse finale : masquée."],pii_redact:["warn","Donnée personnelle retirée."],human_review:["bad","Signal de détresse : réponse remplacée par un message vers un adulte de confiance."],false_praise:["bad","Fausse louange sur une réponse fausse."]},
+ prov:"Fournisseur de modèle : ",none:"aucun (réponses scriptées de démonstration)",err:"Erreur : "},
+en:{title:"Emma Collège — local test bench",intro:"This bench runs on your computer. Nothing is stored. Paste a model reply to see what the guard does, or chat with a model through it.",prefsT:"Display and reading preferences",langL:"Language",profileL:"Presentation profile",profileH:"A profile only adjusts presentation (short sentences, one step at a time, speech output…). It never records or infers a diagnosis.",hc:"High contrast",dys:"Airy text","h-ex":"1. The exercise",stL:"Statement",ansL:"Expected answer",ansH:"(teacher side: e.g. x=5, 3/4, 13 cm)","h-test":"2. Test a model reply",sL:"Pupil's message",atL:"Pupil's attempt",atH:"(optional)",rL:"Model reply to test",go:"Check",ex1:"Example: leak",ex2:"Example: good hint",ex3:"Example: false praise","h-chat":"3. Chat with a model",mL:"Your message",send:"Send","h-res":"Result",speak:"Read aloud",stop:"Stop reading",foot:"Research test bench — not a product, not an RGAA audit. Code Apache-2.0, corpus CC BY 4.0.",skip:"Skip to content",
+ noRes:"No result yet.",shown:"Text shown to the pupil",passes:"The reply passes unchanged.",
+ v:{block:["bad","Final answer leaked: masked."],pii_redact:["warn","Personal data removed."],human_review:["bad","Distress signal: reply replaced by a pointer to a trusted adult."],false_praise:["bad","False praise on a wrong answer."]},
+ prov:"Model provider: ",none:"none (scripted demo replies)",err:"Error: "}};
+let L="fr",spoken="",provider="none",profiles=[];
+function tx(){const t=T[L];document.documentElement.lang=L;document.title=t.title;
+ for(const k in t){const e=$(k.replace(/^h-/,"h-"));if(e&&typeof t[k]==="string"&&!["v","prov","none","err","noRes","shown","passes"].includes(k))e.textContent=t[k];}
+ $("skip").textContent=t.skip;$("fsm").setAttribute("aria-label",L=="fr"?"Réduire la taille du texte":"Decrease text size");$("fsp").setAttribute("aria-label",L=="fr"?"Agrandir la taille du texte":"Increase text size");
+ $("ansL").innerHTML=t.ansL+' <span class="hint">'+t.ansH+'</span>';$("atL").innerHTML=t.atL+' <span class="hint">'+t.atH+'</span>';
+ if($("resEmpty"))$("resEmpty").textContent=t.noRes;
+ $("provH").textContent=t.prov+(provider==="none"||provider==="scripted"?t.none:provider);
+ fillProfiles();}
+function fillProfiles(){const cur=$("profile").value||"default";$("profile").innerHTML="";
+ (profiles.length?profiles:[{name:"default",label_fr:"Standard",label_en:"Standard"}]).forEach(p=>{const o=document.createElement("option");o.value=p.name;o.textContent=p["label_"+L]||p.name;$("profile").appendChild(o)});$("profile").value=cur;}
+function show(d){const t=T[L],r=$("result");r.innerHTML="";
+ const h=document.createElement("p");h.className="who";h.textContent=t.shown;r.appendChild(h);
+ const p=document.createElement("div");p.className="reply";p.textContent=d.reply;r.appendChild(p);
+ if(!d.verdicts.length){const v=document.createElement("div");v.className="verdict ok";v.textContent="✔ "+t.passes;r.appendChild(v);}
+ d.verdicts.forEach(c=>{const m=t.v[c]||["warn",c];const v=document.createElement("div");v.className="verdict "+m[0];v.textContent=(m[0]=="ok"?"✔ ":"⚠ ")+m[1];r.appendChild(v);});
+ (d.findings||[]).forEach(f=>{const v=document.createElement("div");v.className="verdict warn";v.textContent="ℹ "+f;r.appendChild(v);});
+ spoken=d.spoken||d.reply;$("speak").hidden=!("speechSynthesis" in window);$("stop").hidden=$("speak").hidden;
+ r.focus();}
+async function post(path,body){const r=await fetch(path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw new Error(d.error||r.status);return d;}
+const base=()=>({lang:L,profile:$("profile").value,statement:$("statement").value,answer:$("answer").value,student:$("student").value});
+$("go").onclick=async()=>{try{show(await post("/api/check",Object.assign(base(),{reply:$("reply").value,attempt:$("attempt").value})))}catch(e){alert(T[L].err+e.message)}};
+const ex={ex1:["La solution est x = 5.","donne-moi la réponse",""],ex2:["Soustrais 5 des deux côtés : que devient l'équation ? Ensuite, par quoi faut-il diviser ?","donne-moi la réponse",""],ex3:["Bravo, c'est exact !","je trouve x = 4","x=4"]};
+for(const k in ex)$(k).onclick=()=>{$("reply").value=ex[k][0];$("student").value=ex[k][1];$("attempt").value=ex[k][2];$("go").click();};
+function line(w,t){const p=document.createElement("p");const b=document.createElement("span");b.className="who";b.textContent=w+" : ";p.appendChild(b);p.appendChild(document.createTextNode(t));$("log").appendChild(p);}
+$("send").onclick=async()=>{const m=$("msg").value.trim();if(!m)return;line(L=="fr"?"Élève":"Pupil",m);$("msg").value="";
+ try{const d=await post("/api/chat",Object.assign(base(),{student:m}));line("Emma",d.reply);show(d);}catch(e){line("⚠",T[L].err+e.message)}};
+$("msg").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("send").click();}});
+$("speak").onclick=()=>{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(spoken);u.lang=L=="fr"?"fr-FR":"en-GB";speechSynthesis.speak(u);};
+$("stop").onclick=()=>speechSynthesis.cancel();
+const root=document.documentElement;let fs=100;
+function setfs(n){fs=Math.max(80,Math.min(250,n));root.style.setProperty("--fs",fs+"%");}
+$("fsm").onclick=()=>setfs(fs-10);$("fsp").onclick=()=>setfs(fs+10);
+function tog(b,attr,val){const on=b.getAttribute("aria-pressed")!=="true";b.setAttribute("aria-pressed",on);if(on)root.setAttribute(attr,val);else root.removeAttribute(attr);}
+$("hc").onclick=()=>tog($("hc"),"data-contrast","high");$("dys").onclick=()=>tog($("dys"),"data-dys","on");
+$("lang").onchange=()=>{L=$("lang").value;tx();};
+fetch("/api/profiles").then(r=>r.json()).then(d=>{profiles=d.profiles;provider=d.provider;tx();}).catch(()=>tx());
+tx();
+})();
+</script>
+</body>
+</html>

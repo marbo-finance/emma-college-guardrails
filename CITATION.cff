@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+title: "Emma Collège — pedagogical harness for maths tutoring (4e/3e)"
+message: "If you use this software or corpus, please cite it."
+type: software
+authors:
+  - name: "MARBO FINANCE"
+    city: Massy
+    country: FR
+version: 0.2.0
+license: Apache-2.0
+repository-code: "https://github.com/marbo-finance/emma-college-guardrails"
+keywords: [education, mathematics, tutoring, LLM, safety, accessibility]

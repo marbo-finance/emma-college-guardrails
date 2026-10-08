@@ -1,97 +1,172 @@
-# Emma Collège — règles de garde-fou et corpus de test
+# Emma Collège — a pedagogical harness for maths tutoring (grades 8–9, France)
 
-Ce dépôt publie la couche pédagogique de sécurité d'**Emma Collège**, un
-prototype de tuteur en mathématiques pour la 4e et la 3e : les règles qui
-empêchent le modèle de donner directement la réponse d'un exercice, qui
-protègent les données personnelles des enfants, et qui orientent vers un
-adulte de confiance en cas de signal de danger — ainsi que le banc de test
-qui mesure si ces règles tiennent.
+[Version française → README.fr.md](README.fr.md)
 
-**Ce n'est pas le produit entier.** Le routage multi-modèle, le multi-tenant,
-la facturation et le déploiement restent propriétaires — ce qui est publié
-ici est la partie que nous pensons devoir être vérifiable par n'importe qui,
-pas juste affirmée dans un dossier de subvention.
+A small, dependency-free Python library and test bench that wraps **any** LLM
+used as a maths tutor for French *4e* and *3e* pupils (ages 13–15) and
+**checks every reply deterministically** before a child sees it:
 
-## Ce que contient ce dépôt
+- **Hints, not answers** — the final answer to the exercise is detected by
+  *mathematical equivalence*, not string matching (`6/8` ≡ `3/4` ≡ `0,75`;
+  `x² + 6x + 9` ≡ `(x+3)²`; `5√2`; `4,5×10⁴`; "cinq"…) and masked.
+- **No false praise** — "Bravo !" on a wrong attempt is flagged.
+- **Child safety** — distress signals bypass the model and return a canned
+  reply pointing to a trusted adult (119); personal data is redacted;
+  instruction-smuggling through fake assistant turns is rejected.
+- **Model-agnostic** — no model is called by the harness; bring your own
+  (local llama.cpp/vLLM, hosted API, institutional gateway).
+- **Accessibility as preferences, never diagnoses** — see below.
 
-- **`emma_layer.py`** — le contrat pédagogique et les trois couches de
-  contrôle :
-  - `build_system_prompt` — construit les instructions envoyées au modèle
-    (indices, jamais la réponse finale ; pas de fausse louange sur une
-    mauvaise réponse ; garde-niveau programme).
-  - `firewall_pre` — avant tout appel au modèle : détection d'un signal de
-    mise en danger (bascule immédiatement vers un message invitant à parler
-    à un adulte de confiance, sans jamais appeler le modèle), rédaction des
-    données personnelles (email, téléphone, adresse).
-  - `guard_output` / `firewall_post` — après la réponse du modèle : détection
-    d'une réponse finale donnée directement (fuite), masquage, et un essai de
-    reformulation avant de masquer définitivement.
-- **`curriculum.py`** — le format de catalogue d'objectifs pédagogiques
-  (niveau, notion, programme), validé strictement à la lecture.
-- **`catalogs/emma-fr.v1.json`** — un premier catalogue d'exemple (CM1/6e).
-- **`catalogs/emma-college-4e-3e.v1.json`** — le catalogue du projet
-  Emma Collège : 29 objectifs (15 en 4e, 14 en 3e) couvrant les quatre
-  domaines du programme de mathématiques du cycle 4 (nombres et calculs ;
-  organisation et gestion de données, fonctions ; grandeurs et mesures ;
-  espace et géométrie) — nombres relatifs, calcul littéral, équations,
-  théorèmes de Pythagore et de Thalès, trigonométrie, fonctions affines,
-  statistiques, probabilités. Validé à la lecture par `curriculum.py`
-  (29/29 objectifs chargés sans erreur).
-- **`bench/golden_set.jsonl`** — 51 cas de test annotés : demandes directes de
-  réponse, tentatives de contournement ("ignore tes instructions"), données
-  personnelles, signaux de mise en danger, tutorat normal, mauvaises réponses
-  d'élève.
-- **`bench/run_public_bench.py`** — rejoue 42 de ces 51 cas **sans aucun
-  modèle** (`guard_output()` est une fonction déterministe, elle évalue une
-  paire question/réponse donnée). Les 9 cas restants (historique de
-  conversation, injection de rôle) dépendent du serveur multi-tenant privé et
-  ne sont pas reproduits ici — indiqué explicitement en `SKIP`, jamais caché.
-- **`bench/results-round6.md` / `.json`** — les résultats mesurés en interne
-  sur l'ensemble des 51 cas (avec modèle réel) : taux de blocage des fuites
-  100 %, taux de faux blocage sur du tutorat normal 0 %, redaction PII 100 %.
+> Status: **v0.2, research prototype.** Not teacher-validated yet, no
+> accessibility audit, heuristics rather than proofs. Limits are listed
+> up-front below. Published by MARBO FINANCE (Massy) as the public part of an
+> Édu-Up application (call planned for March 2027).
 
-## Faire tourner le banc de test
+## Try it in 10 minutes (teachers)
+
+Requires Python ≥ 3.10. No install, no account, no key, no network.
 
 ```bash
-python3 bench/run_public_bench.py
+git clone https://github.com/marbo-finance/emma-college-guardrails && cd emma-college-guardrails
+python3 -m emma_college serve          # local test bench: http://127.0.0.1:8765
 ```
 
-Aucune dépendance externe, aucune clé, aucun modèle requis — stdlib Python
-uniquement. Sortie attendue : `42/42 checked cases passed`.
+Type an exercise and its expected answer, paste a model reply (or let the
+scripted demo answer) and see what the harness masks, why, and in which
+verdict. Everything stays on your machine; nothing is logged.
 
-`provider.py` à la racine est un stub documenté : le seul point où
-`emma_layer.py` appelle un modèle (une unique tentative de reformulation
-après une fuite détectée) passe par `provider.complete()`. Ce fichier montre
-l'interface attendue plutôt qu'une intégration réelle — c'est un choix de
-conception, pas un oubli : la couche de sécurité ne doit dépendre d'aucun
-fournisseur de modèle en particulier.
+From the command line:
 
-## Limites, dites à l'avance
+```bash
+python3 -m emma_college check --exercise "Résous 3x + 5 = 20." --answer "x=5" \
+    --student "donne-moi la réponse" --reply "La solution est x = 5."
+python3 -m emma_college chat --exercise "Résous 3x + 5 = 20." --answer "x=5"
+python3 -m emma_college speak "x² + 6x + 9 = (x+3)²"     # spoken maths for screen readers
+```
 
-- La détection de fuite est heuristique (regex + règles), pas un jugement par
-  un second modèle. Elle réduit le risque de fuite, elle ne l'élimine pas.
-- Le catalogue 4e/3e est construit sur le programme de mathématiques du
-  cycle 4 actuellement en vigueur (2019). Un nouveau programme (arrêté du
-  18 février 2026) entrera en application progressivement : 5e à la
-  rentrée 2026-2027, 4e à la rentrée 2027-2028, 3e à la rentrée 2028-2029.
-  Ce catalogue sera révisé une fois le contenu détaillé du nouveau
-  programme 4e/3e disponible.
-- Les cas d'historique de conversation (injection via un tour précédent,
-  usurpation du rôle assistant) sont gérés côté serveur, hors de ce dépôt.
+To use a real model, set `EMMA_BASE_URL`, `EMMA_MODEL` (and `EMMA_API_KEY` if
+needed) for any OpenAI-compatible endpoint. What we would like from you:
+wrong blocks, missed leaks, wording a pupil would find odd — see
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Licence
+## Reproduce the measurements (researchers)
 
-- Code (`emma_layer.py`, `curriculum.py`, `provider.py`,
-  `bench/run_public_bench.py`) : **Apache License 2.0** — voir `LICENSE`.
-- Données (`bench/golden_set.jsonl`, `bench/results-round6.*`,
-  `catalogs/*.json`) : **Creative Commons CC BY 4.0**.
+```bash
+python3 -m emma_college bench                 # 4e/3e corpus v0.2 (30 cases), no model
+python3 -m emma_college bench --json out.json # full per-case report
+python3 bench/run_public_bench.py             # legacy generic bench: 42/42
+python3 -m unittest discover -s tests         # unit tests (≈100, incl. 75 for accessibility)
+```
 
-Usage commercial autorisé pour l'un comme pour l'autre, sans redevance —
-la valeur que nous protégeons (routage multi-modèle, multi-tenant,
-déploiement) n'est pas publiée ici.
+Current results on `corpus/emma-college-corpus.v0.2.jsonl` (hand-written by
+the authors — **not** an independent benchmark):
 
-## Contexte
+| Measure | Result |
+|---|---|
+| Leaky replies detected | 92.9 % (52/56) |
+| False blocks on legitimate hints | 0 % (0/31) |
+| False praise on wrong attempts detected | 100 % (3/3) |
 
-Publié par **MARBO FINANCE** (Massy) dans le cadre du dossier Édu-Up
-« Emma Collège » déposé auprès de la Direction du numérique pour l'éducation
-(DNE, ministère de l'Éducation nationale).
+Known misses are printed, not hidden: a final answer written as a word next
+to a unit (*"Soixante euros."*), a result that coincides with a number given
+in the statement, exact values with π (`36π`), and English number words.
+Cases tagged `collision` document text-level false-positive risks and are
+reported separately. Corpus format and annotation protocol:
+[docs/CORPUS.md](docs/CORPUS.md). We are looking for **2–3 researchers**
+(didactics of mathematics, EIAH/tutoring, accessibility) to challenge the
+corpus and the metrics.
+
+## Works with any LLM
+
+The harness sits **after** the model, so it does not care which one you use.
+Anything reachable through an OpenAI-compatible `/v1/chat/completions`
+endpoint works with the bundled adapter, which includes a
+[LiteLLM](https://github.com/BerriAI/litellm) proxy in front of:
+
+- **open-source models hosted locally** — by a school, on a teacher's
+  workstation or on the pupil's own PC (llama.cpp, vLLM, LM Studio…);
+- **sovereign / European models** (e.g. Mistral);
+- **well-known commercial models** (e.g. Claude, OpenAI, Gemini).
+
+Set `EMMA_BASE_URL` / `EMMA_MODEL` (and `EMMA_API_KEY`). The checks are the
+same whatever the model; only the pupil-data exposure differs, and that choice
+belongs to the integrator (a local or in-school model keeps pupil text on
+site; a hosted API does not — mind GDPR and the ministry's AI usage
+framework). *Honesty note:* we have run the full loop with the scripted
+provider and measured the checks on fixed replies; per-model leak rates are
+not yet published — running the bench on your model of choice is one of the
+things we would like researchers to do.
+
+## What makes this different
+
+Édu-Up already supported socratic maths tutors (e.g. DinoBot, which states
+that its AI guides by questioning without giving the answer). We make **no
+claim** that others lack protections; their code is not public so we cannot
+compare. What this repository adds, and what you can verify yourself:
+
+1. **Executable and open** — rules, equivalence engine, corpus and bench are
+   public and run offline. No Édu-Up laureate we found publishes comparable
+   code ([docs/COMPARISON.md](docs/COMPARISON.md), with sources and limits).
+2. **Grade 8–9 curriculum-aligned test corpus** — 29 objectives
+   (`catalogs/emma-college-4e-3e.v1.json`) covering relative numbers,
+   literal calculus, equations, Pythagoras/Thalès, trigonometry, remarkable
+   identities, roots, scientific notation, probabilities, functions.
+3. **Exact-equivalence leak detection** — fractions, decimals with French
+   comma, radicals, polynomials, percents, inequalities; leaves the pupil's
+   own correct answer alone.
+4. **Disability is a first-class requirement, not a footnote** (below).
+5. **Honest limits** and a bench that prints its own failures.
+
+## Accessibility and disability
+
+What the harness does:
+
+- **Needs-based preference profiles**, never diagnoses (health data is
+  special-category under GDPR art. 9): e.g. short sentences, no
+  metaphors, spoken-maths output, large-print friendly structure, reduced
+  cognitive load, step-by-step pacing. A teacher or parent picks preferences;
+  the system never infers or stores a condition.
+- **Deterministic text lint/adaptation** of tutor replies for each profile.
+- **Spoken maths in French and English** (`speak`) and **MathML export** for
+  screen readers and braille displays.
+- **Braille is delegated**, not reinvented: use MathCAT, Liblouis or apiDV's
+  MathsDV tooling with the MathML we export.
+
+What it does **not** do: it is not a user interface. WCAG/RGAA conformance of
+a pupil-facing app is the integrator's job, and **we claim no RGAA audit or
+compliance**. The local test bench is built with semantic HTML, labels and
+keyboard operation as a sanity baseline only. Details and open questions:
+[docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md). We are actively seeking
+teachers who work with visually impaired, dyslexic or neurodivergent pupils.
+
+## Limits, stated up-front
+
+- Leak detection is heuristic text analysis, not a second-model judgement or
+  a proof. It lowers risk; it does not remove it.
+- Equivalence works on answers the engine can parse; unparsed answers fall
+  back to the older announced-answer rules.
+- The corpus is small, author-written and not teacher-validated.
+- The catalogue follows the current cycle 4 programme (2019). New programme
+  (order of 18 Feb 2026): 5e in 2026-27, **4e in 2027-28**, 3e in 2028-29;
+  the catalogue will be revised when detailed texts are available.
+- Very small answers (0, 1) are hard to protect: any mention of that digit outside the statement is masked (false-block risk, found in review).
+- LaTeX is only partly handled (`\times`, `^{n}`); other macros are not.
+- Server-side concerns (history injection, multi-tenant routing) are outside
+  this repository.
+
+## Layout
+
+| Path | Content |
+|---|---|
+| `emma_college/` | harness, leak engine, exact maths, CLI, local web bench |
+| `emma_layer.py` | original safeguarding / PII / smuggling rules |
+| `corpus/` | 4e/3e test corpus (CC BY 4.0) + builder |
+| `catalogs/` | curriculum objective catalogues (CC BY 4.0) |
+| `bench/` | legacy generic bench and round-6 results |
+| `docs/` | comparison, corpus protocol, accessibility |
+| `tests/` | unit tests |
+
+## Cite / licence
+
+Code: **Apache-2.0**. Data (corpus, catalogues, bench): **CC BY 4.0**. See
+`CITATION.cff` to cite. Questions and test reports are welcome by issue.

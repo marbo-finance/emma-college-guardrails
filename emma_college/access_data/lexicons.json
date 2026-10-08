@@ -1,0 +1,118 @@
+{
+  "_comment": "Lexicons for emma_college.access.lint. Lower-case phrases, plain apostrophe. Extend via pull request; every addition should come with a corpus case in corpus-access/accessibility-cases.jsonl.",
+  "figurative": {
+    "fr": [
+      "ça roule", "c'est du gâteau", "du gâteau", "avoir le cafard", "le cafard",
+      "se creuser la tête", "creuser la tête", "creuse-toi la tête", "creuse toi la tête",
+      "pas de panique", "coup de main", "coup de pouce", "dans la poche", "c'est dans la poche",
+      "tomber à pic", "tombe à pic", "mettre les pieds dans le plat", "poser un lapin",
+      "avoir la tête dans les nuages", "dans les nuages", "tête en l'air", "être dans la lune", "dans la lune",
+      "prendre le taureau par les cornes", "la mer à boire", "chercher midi à quatorze heures",
+      "tourner autour du pot", "avoir du pain sur la planche", "du pain sur la planche",
+      "mettre la main à la pâte", "il pleut des cordes", "coûter les yeux de la tête",
+      "ça coule de source", "jeter l'éponge", "tirer son épingle du jeu", "faire d'une pierre deux coups",
+      "bête comme chou", "simple comme bonjour", "les doigts dans le nez", "un jeu d'enfant",
+      "avoir le nez creux", "mettre la charrue avant les bœufs", "mettre la charrue avant les boeufs",
+      "sauter du coq à l'âne", "pas sorti de l'auberge", "revenons à nos moutons",
+      "voir le bout du tunnel", "le bout du tunnel", "tu brûles", "tu es sur la bonne piste",
+      "sur la bonne piste", "sur la bonne voie", "tu touches au but", "dans le mille",
+      "mettre le doigt dessus", "un vrai casse-tête", "casse-tête", "faire chou blanc",
+      "pédaler dans la semoule", "c'est du chinois", "brûler les étapes", "mettre les bouchées doubles",
+      "mettre au pied du mur", "avoir la main verte", "noyer le poisson", "se mettre martel en tête",
+      "donner sa langue au chat", "avoir un trou de mémoire", "le nerf de la guerre",
+      "la clé du problème", "ça te parle", "ça ne tourne pas rond", "se casser la tête"
+    ],
+    "en": [
+      "piece of cake", "break a leg", "hit the nail on the head", "under the weather",
+      "spill the beans", "cost an arm and a leg", "once in a blue moon", "bite the bullet",
+      "beat around the bush", "cut corners", "get the ball rolling", "a walk in the park",
+      "easy as pie", "on the right track", "rack your brain", "hang in there",
+      "back to square one", "think outside the box", "the ball is in your court",
+      "let the cat out of the bag", "kill two birds with one stone", "raining cats and dogs",
+      "pull your leg", "cross that bridge", "get your head around", "no-brainer", "no brainer",
+      "in a nutshell", "ballpark figure", "scratch my head", "break the ice", "go the extra mile",
+      "up in the air", "keep your eyes peeled", "don't panic", "a hard nut to crack",
+      "the key to the problem", "you're getting warm", "you're on fire", "nail it", "bang on"
+    ]
+  },
+  "time_pressure": {
+    "fr": [
+      "vite", "rapidement", "rapide", "chrono", "dépêche-toi", "dépêche toi", "dépêchez-vous",
+      "en moins de", "au plus vite", "le plus vite possible", "tout de suite", "sans tarder",
+      "le temps presse", "compte à rebours", "minuteur", "urgent", "en un temps record",
+      "plus vite que", "avant la fin du temps", "presse-toi"
+    ],
+    "en": [
+      "hurry", "hurry up", "quickly", "quick", "fast", "asap", "right away", "as fast as",
+      "as quickly as", "time is running out", "countdown", "against the clock", "in less than",
+      "in under", "no time to lose", "speed up"
+    ]
+  },
+  "visual_deixis": {
+    "fr": [
+      "comme tu peux le voir", "comme vous pouvez le voir", "comme on peut le voir", "comme tu vois",
+      "comme tu le vois", "comme on le voit", "tu vois ici", "regarde la figure", "regarde le schéma",
+      "regarde le dessin", "regarde le graphique", "regarde l'image", "regarde la courbe",
+      "ci-dessus", "ci-dessous", "à gauche", "à droite", "en haut", "en bas", "sur l'image",
+      "sur le schéma", "sur la figure", "sur le dessin", "comme le montre la figure"
+    ],
+    "en": [
+      "as you can see", "as you see", "as we can see", "as shown above", "as shown below",
+      "look at the figure", "look at the diagram", "look at the picture", "look at the graph",
+      "on the left", "on the right", "above", "below", "in the picture", "in the figure",
+      "in the diagram", "as the figure shows"
+    ]
+  },
+  "audio_cues": {
+    "fr": [
+      "écoute", "écoutons", "comme tu l'as entendu", "comme tu as entendu", "tu entends", "tu as dû entendre",
+      "j'ai dit", "dans l'audio", "à l'oral", "tu vas entendre", "au son", "ça sonne", "écoute bien"
+    ],
+    "en": [
+      "listen", "as you heard", "you hear", "you will hear", "i said", "in the audio",
+      "out loud", "it sounds", "listen carefully", "as i just said"
+    ]
+  },
+  "typing_heavy": {
+    "fr": [
+      "écris toute", "écris tout", "écris un paragraphe", "rédige", "recopie", "tape", "tape tous",
+      "explique en détail par écrit", "développe ta réponse", "en plusieurs phrases",
+      "par une phrase complète", "écris ta démonstration complète", "détaille par écrit"
+    ],
+    "en": [
+      "write out", "type out", "write a paragraph", "copy the", "in full sentences",
+      "write your full", "explain in detail in writing", "write a detailed", "type all"
+    ]
+  },
+  "color_words": {
+    "fr": [
+      "rouge", "rouges", "bleu", "bleue", "bleus", "bleues", "vert", "verte", "verts", "vertes",
+      "jaune", "jaunes", "orange", "oranges", "violet", "violette", "violets", "violettes",
+      "rose", "roses", "noir", "noire", "noirs", "noires", "gris", "grise", "grises",
+      "blanc", "blanche", "blancs", "blanches", "marron"
+    ],
+    "en": [
+      "red", "blue", "green", "yellow", "orange", "purple", "violet", "pink", "black", "white",
+      "gray", "grey", "brown"
+    ]
+  },
+  "color_nouns": {
+    "fr": [
+      "case", "cases", "bouton", "boutons", "zone", "zones", "ligne", "lignes", "courbe", "courbes",
+      "trait", "traits", "flèche", "flèches", "segment", "segments", "cercle", "carré", "triangle",
+      "figure", "partie", "parties", "texte", "mot", "mots", "côté", "côtés", "angle", "angles",
+      "droite", "droites", "barre", "barres", "colonne", "colonnes", "point", "points", "rectangle",
+      "cellule", "cellules", "bloc", "boîte", "symbole", "nombre", "nombres", "chiffre"
+    ],
+    "en": [
+      "box", "boxes", "button", "buttons", "area", "areas", "line", "lines", "curve", "curves",
+      "arrow", "arrows", "segment", "segments", "circle", "square", "triangle", "shape", "part",
+      "parts", "text", "word", "words", "side", "sides", "angle", "angles", "bar", "bars", "column",
+      "columns", "point", "points", "rectangle", "cell", "cells", "block", "number", "numbers"
+    ]
+  },
+  "caps_allowlist": [
+    "PGCD", "PPCM", "TVA", "SOHCAHTOA", "CNIL", "RGPD", "QCM", "SVT", "EPS", "HTML", "PDF",
+    "OCDE", "PISA", "BREVET", "DNB", "CAPES", "NASA", "UNESCO", "ONU", "USA", "CDI", "CPE"
+  ]
+}

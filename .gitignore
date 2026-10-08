@@ -1,2 +1,5 @@
 __pycache__/
 *.pyc
+
+# Working notes — internal/business context, never published
+NOTES-INTERNAL.md
