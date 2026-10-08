@@ -53,18 +53,19 @@ class Gate:
         self._lock = threading.Lock()
 
     def who(self, header: str):
-        """Label for a valid 'Bearer <token>' header, '' when auth is off, None if invalid."""
+        """Key of a valid 'Bearer <token>' header, '' when auth is off, None if invalid."""
         if not self.required:
             return ""
         tok = header[7:].strip() if header.lower().startswith("bearer ") else ""
         digest = hashlib.sha256(tok.encode()).hexdigest()
         for known, label in self.tokens.items():
             if hmac.compare_digest(known, digest):
-                return label or digest[:8]
+                return digest[:16]  # rate-limit key: unique per token, labels can repeat
         return None
 
-    def allow(self, key: str, chat: bool) -> str:
-        """'' if allowed, else 'rate' (per minute) or 'daily' (chat cap)."""
+    def allow(self, key: str, chat: bool = False) -> str:
+        """'' if allowed, else 'rate' (per minute) or 'daily' (chat cap).
+        ``chat=True`` counts one model call: call it only right before calling the model."""
         now = time.time()
         with self._lock:
             all_h, chat_h = self._hits.get(key, ([], []))
@@ -86,7 +87,8 @@ class Gate:
 class Handler(BaseHTTPRequestHandler):
     provider = None
     gate = Gate()
-    server_version = "EmmaCollegeDemo/0.2"
+    server_version = "EmmaCollegeDemo/0.3"
+    timeout = 15  # seconds per socket read: slow or stalled clients free their thread
 
     def log_message(self, *a):  # never log request content
         pass
@@ -121,24 +123,29 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", "0")
         self.end_headers()
 
-    def _auth(self, chat=False):
+    def _auth(self):
         """Return the caller label, or None after having sent the error."""
         who = self.gate.who(self.headers.get("Authorization", ""))
         if who is None:
             self._json(401, {"error": "invalid or missing token"})
             return None
-        why = self.gate.allow(who or "anon", chat)
+        return self._limit(who or "anon", False)
+
+    def _limit(self, key, chat):
+        why = self.gate.allow(key, chat)
         if why:
             self._json(429, {"error": "too many requests" if why == "rate"
                              else "daily chat limit reached", "reason": why})
             return None
-        return who or "anon"
+        return key
 
     def do_GET(self):
         if self.path == "/api/health":
             return self._json(200, {"ok": True, "auth": self.gate.required,
                                     "chat": bool(self.provider and self.provider.name != "scripted")})
         if self.path in ("/", "/index.html"):
+            if self.gate.required:  # the bundled page has no token field: hosted mode is API-only
+                return self._json(404, {"error": "API only; use the web portal"})
             with open(os.path.join(HERE, "index.html"), "rb") as f:
                 self._send(200, f.read(), "text/html; charset=utf-8")
         elif self.path == "/api/profiles":
@@ -152,11 +159,14 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if self.path not in ("/api/check", "/api/chat"):
             return self._json(404, {"error": "not found"})
-        if self._auth(chat=self.path == "/api/chat") is None:
+        key = self._auth()
+        if key is None:
             return
         try:
             n = int(self.headers.get("Content-Length") or 0)
         except ValueError:
+            return self._json(400, {"error": "bad length"})
+        if n < 0:
             return self._json(400, {"error": "bad length"})
         if n > MAX_BODY:
             return self._json(413, {"error": "too large"})
@@ -191,6 +201,8 @@ class Handler(BaseHTTPRequestHandler):
                                         "verdicts": pre.verdicts, "spoken": None})
             msgs = [{"role": "system", "content": h.system_prompt()},
                     {"role": "user", "content": pre.message}]
+            if self._limit(key, True) is None:
+                return
             try:
                 raw = self.provider.complete(msgs)
             except Exception as e:  # network / config problems are shown, not hidden

@@ -84,6 +84,38 @@ class Hosted(unittest.TestCase):
         g = S.Gate(None, "", rate_per_min=2)
         self.assertEqual([g.allow("k", False) for _ in range(3)], ["", "", "rate"])
 
+    def test_negative_length_rejected(self):
+        import http.client
+        c = http.client.HTTPConnection("127.0.0.1", self.port, timeout=5)
+        c.putrequest("POST", "/api/check")
+        c.putheader("Authorization", "Bearer " + TOKEN)
+        c.putheader("Content-Length", "-1")
+        c.endheaders()
+        self.assertEqual(c.getresponse().status, 400)
+
+    def test_same_label_tokens_do_not_share_quota(self):
+        d = tempfile.mkdtemp()
+        f = os.path.join(d, "t2.json")
+        h = lambda t: hashlib.sha256(t.encode()).hexdigest()
+        with open(f, "w") as fh:
+            json.dump({"tokens": [{"label": "x", "sha256": h("a")}, {"label": "x", "sha256": h("b")}]}, fh)
+        g = S.Gate(f, rate_per_min=1)
+        ka, kb = g.who("Bearer a"), g.who("Bearer b")
+        self.assertNotEqual(ka, kb)
+        self.assertEqual((g.allow(ka), g.allow(kb)), ("", ""))
+
+    def test_rejected_chat_does_not_burn_quota(self):
+        g = S.Gate(None, chat_per_day=1)
+        S.Handler.gate, old = g, S.Handler.gate
+        try:
+            req = urllib.request.Request(f"http://127.0.0.1:{self.port}/api/chat", data=b"{", method="POST")
+            with self.assertRaises(urllib.error.HTTPError) as cm:
+                urllib.request.urlopen(req, timeout=5)
+            self.assertEqual(cm.exception.code, 400)
+            self.assertEqual(g.allow("anon", True), "")
+        finally:
+            S.Handler.gate = old
+
     def test_options_preflight(self):
         c, _, h = _call(self.port, "/api/check", token=None, method="OPTIONS")
         self.assertEqual(c, 204)
