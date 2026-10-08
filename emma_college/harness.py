@@ -117,9 +117,12 @@ def _same_value(attempt: str, answers) -> Optional[bool]:
 class Harness:
     def __init__(self, lang: str = "fr", profile: str = "default", pii_redact: bool = True):
         self.lang = lang if lang in ("fr", "en") else "fr"
-        self.profile = profile
+        self.profile = profile  # a built-in/registered name, or an access.Profile object
         self.tenant = {"language": self.lang,
                        "policy": {"pii_redact": pii_redact, "hints_not_answers": True}}
+
+    def _adapted(self) -> bool:
+        return bool(self.profile) and getattr(self.profile, "name", self.profile) != "default"
 
     # -- before the model ---------------------------------------------------
     def pre(self, student_message: str) -> Pre:
@@ -133,7 +136,7 @@ class Harness:
             {"language": self.lang, "age_range": "13-15",
              "curriculum": "FR-cycle4 (4e/3e) mathématiques",
              "policy": {"hints_not_answers": True}})
-        if self.profile and self.profile != "default":
+        if self._adapted():
             try:
                 from . import access
                 text += "\n" + access.profile_prompt_addendum(self.profile, self.lang)
@@ -181,7 +184,7 @@ class Harness:
         if correct is False and has_praise(res.reply):
             res.verdicts.append("false_praise")
         # 5. accessibility profile
-        if self.profile and self.profile != "default":
+        if self._adapted():
             try:
                 from . import access
                 ad = access.adapt(res.reply, self.profile, self.lang)

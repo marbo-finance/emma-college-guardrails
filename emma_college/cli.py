@@ -5,7 +5,8 @@
     chat      talk to a model through the harness (needs EMMA_BASE_URL/EMMA_MODEL,
               otherwise a scripted demo provider is used)
     speak     print the spoken form of a maths text (for screen readers / TTS)
-    serve     local web demo for teachers and researchers (127.0.0.1 only)
+    serve     web demo for teachers and researchers (127.0.0.1; hosted mode with --tokens)
+    token     create an access token for the hosted demo
 """
 from __future__ import annotations
 
@@ -67,7 +68,26 @@ def _cmd_speak(a) -> int:
 
 def _cmd_serve(a) -> int:
     from .webdemo.server import serve
-    serve(a.host, a.port)
+    serve(a.host, a.port, a.tokens, a.cors_origin, a.rate, a.chat_per_day)
+    return 0
+
+
+def _cmd_token(a) -> int:
+    """Create an access token; only its SHA-256 goes into the tokens file."""
+    import hashlib
+    import os
+    import secrets
+    tok = "emma_" + secrets.token_urlsafe(24)
+    entry = {"label": a.label, "sha256": hashlib.sha256(tok.encode()).hexdigest()}
+    data = {"tokens": []}
+    if os.path.exists(a.file):
+        with open(a.file, encoding="utf-8") as f:
+            data = json.load(f)
+    data.setdefault("tokens", []).append(entry)
+    fd = os.open(a.file, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+    print(tok)
     return 0
 
 
@@ -107,6 +127,14 @@ def main(argv=None) -> int:
     sv = sub.add_parser("serve", help="local web demo")
     sv.add_argument("--host", default="127.0.0.1")
     sv.add_argument("--port", type=int, default=8765)
+    sv.add_argument("--tokens", help="hosted mode: JSON file of hashed access tokens (see `token`)")
+    sv.add_argument("--cors-origin", default="", help="hosted mode: the one web origin allowed to call the API")
+    sv.add_argument("--rate", type=int, default=30, help="requests per minute per token")
+    sv.add_argument("--chat-per-day", type=int, default=200, help="model calls per day per token")
+
+    tk = sub.add_parser("token", help="create an access token for the hosted demo")
+    tk.add_argument("label")
+    tk.add_argument("--file", default="emma-tokens.json")
 
     for sp in (c, ch, sv):
         sp.add_argument("--profiles", help="JSON file of pupil profiles (schema emma-pupil-profile/1)")
@@ -123,7 +151,7 @@ def main(argv=None) -> int:
         from .bench import main as bench_main
         return bench_main(a.rest)
     return {"check": _cmd_check, "chat": _cmd_chat, "speak": _cmd_speak,
-            "serve": _cmd_serve}[a.cmd](a)
+            "serve": _cmd_serve, "token": _cmd_token}[a.cmd](a)
 
 
 if __name__ == "__main__":
