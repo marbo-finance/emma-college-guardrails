@@ -25,6 +25,16 @@ class Leaks(unittest.TestCase):
         self.no("5", "En 4e, tu as vu les relatifs.")
         self.no("5", "Pour la 5e étape, relis.")
 
+    def test_result_position_not_exempted_by_statement(self):
+        # "10" is both a given of the statement and the answer: stated in
+        # result position it is an announcement, not a quote (stat-01).
+        self.yes("10", "La moyenne est 10.", "Calcule la moyenne de 8, 12 et 10.")
+        self.yes("10", "(8 + 12 + 10) / 3 = 10", "Calcule la moyenne de 8, 12 et 10.")
+        # same value mentioned mid-sentence (not in result position): given
+        # data restated in a hint, not a leak
+        self.no("10", "Regarde le 10 de l'énoncé : c'est l'un des trois nombres.",
+                "Calcule la moyenne de 8, 12 et 10.")
+
     def test_fractions(self):
         for r in ["Tu obtiens 6/8.", "soit 0,75", "c'est 75 %", "\\frac{3}{4}", "trois quarts",
                   "C'est égal à 3/4"]:

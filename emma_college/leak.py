@@ -439,7 +439,14 @@ def find_leaks(reply: str, answers: Iterable[Answer], statement: str = "") -> li
             reason = _scalar_match(c, a)
             if reason and c.kind == "word" and not c.result_pos:
                 reason = None
-            if reason and not _in_statement(reply, c.start, c.end, nreply, idx, nstatement):
+            if reason and (c.result_pos
+                           or not _in_statement(reply, c.start, c.end,
+                                                nreply, idx, nstatement)):
+                # The statement exemption protects verbatim quotes of the
+                # exercise (a hint may restate it). A value stated in result
+                # position ("est 10", "= 10") is an answer announcement, not a
+                # quote, even when that value also occurs in the statement
+                # (e.g. the answer of a mean equals one of the given data).
                 leaks.append(Leak(c.start, c.end, c.text, reason))
                 break
     for a in answers:
