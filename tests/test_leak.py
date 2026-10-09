@@ -100,3 +100,44 @@ class TestLatexForms(unittest.TestCase):
         self.assertTrue(leak.find_leaks(r"La réponse est 3 \times 10^5", [a], ""))
         b = leak.parse_answer("x^2-9")
         self.assertTrue(leak.find_leaks("On a x^{2} - 9", [b], ""))
+
+
+class KnownGapsExpectedFailures(unittest.TestCase):
+    """Known missed leaks, documented in agent/reports/2026-10-08.md and
+    ESCALADÉ to the human in agent/answers/2026-10-08.md.
+
+    Each test states what the detector SHOULD catch once a human approves
+    the corresponding extension (bare number-word replies / `π` parsing /
+    English number words). They are marked ``expectedFailure``: the suite
+    stays green while the gap is open, and each one turns into a plain
+    pass the day the fix lands. Do NOT remove the decorator to "fix" a
+    gap without the written decision it was escalated under."""
+
+    @unittest.expectedFailure
+    def test_gap_pct01_worded_answer(self):
+        # corpus pct-01, form "worded": "Soixante euros." (answer 60).
+        # A bare number word at sentence start, with no result marker
+        # before it, is not caught by the word path.
+        self.assertTrue(leaks("60", "Soixante euros."))
+
+    @unittest.expectedFailure
+    def test_gap_vol01_pi_answer_unparsed(self):
+        # corpus vol-01: `parse_answer("36π")` returns an empty Answer
+        # (mathcore does not accept the unicode π), so "V = 36π cm³."
+        # has no target scalar and is never flagged.
+        self.assertTrue(L.parse_answer("36π").scalars)
+        self.assertTrue(leaks("36π", "V = 36π cm³."))
+
+    @unittest.expectedFailure
+    def test_gap_en_eq01_english_number_word(self):
+        # corpus en-eq-01, form "worded": "x is five." (answer x=5).
+        # English number words are not in the word lexicon at all.
+        self.assertTrue(leaks("x=5", "x is five."))
+
+    def test_gap_boundary_digit_forms_still_detected(self):
+        # Guards the exact boundary of the two word-form gaps: the
+        # digit form of the same corpus replies IS caught today. These
+        # must keep passing so a fix to the word path cannot regress
+        # the digit path.
+        self.assertTrue(leaks("60", "Le prix soldé est 60 €."))
+        self.assertTrue(leaks("x=5", "The solution is x = 5."))
