@@ -25,7 +25,7 @@ from fractions import Fraction
 from typing import Iterable, Optional
 
 from . import mathcore as mc
-from .words import find_number_words
+from .words import find_number_words, find_number_words_en
 
 MASK = {"fr": "〔réponse masquée — essaie d'abord !〕",
         "en": "〔answer masked — try it yourself first!〕"}
@@ -197,6 +197,40 @@ _RESULT_AFTER = re.compile(
     re.IGNORECASE)
 
 
+_SENT_BREAK = re.compile(r"[.!?\n;:,]")
+_LEAD_OK = {"x", "y", "z", "n", "a", "b", "it", "is", "are", "its", "this", "that", "so",
+            "thus", "then", "the", "answer", "result", "solution", "donc", "alors", "ce",
+            "c", "est", "cela", "ça", "oui", "yes", "ok", "la", "le", "les", "ca", "vaut",
+            "equals", "s", "resultat", "résultat", "reponse", "réponse", "valeur", "value",
+            "get", "got", "you"}
+_UNIT_OK = {"euro", "euros", "€", "dollar", "dollars", "cm", "mm", "m", "km", "kg", "g", "l",
+            "cl", "ml", "cm²", "m²", "cm³", "m³", "degrés", "degres", "degrees", "°", "ans",
+            "an", "jour", "jours", "heure", "heures", "minute", "minutes", "seconde",
+            "secondes", "%", "pourcent", "percent", "units", "unités", "unites", "meters",
+            "metres", "mètres", "centimètres", "centimetres", "cm2", "cm3", "m2", "m3"}
+_TOKEN = re.compile(r"[^\W\d_]+|[€%°$]")
+
+
+def _short_answer(reply: str, start: int, end: int) -> bool:
+    """The number word fills a whole short sentence ("Soixante euros.",
+    "x is five."): optional neutral lead-in, at most two trailing unit tokens
+    from a closed list, no comma/colon after it. Imperatives ("Ajoute soixante
+    euros.") and ordinary clauses ("Ici, deux étapes suffisent.") do not qualify."""
+    b = max((reply.rfind(c, 0, start) for c in ".!?\n;"), default=-1) + 1
+    m = _SENT_BREAK.search(reply, end)
+    if m and m.group() in ",:;":
+        return False
+    before = reply[b:start].replace("*", " ").replace("=", " ").replace(",", " ")
+    after = reply[end:(m.start() if m else len(reply))]
+    lead = [w.lower() for w in _TOKEN.findall(before)]
+    trail = [w.lower() for w in _TOKEN.findall(after)]
+    if len(lead) > 3 or len(trail) > 2:
+        return False
+    if any(w not in _LEAD_OK for w in lead) or any(w not in _UNIT_OK for w in trail):
+        return False
+    return not re.search(r"\d", before + after)
+
+
 def _result_pos(reply: str, start: int, end: Optional[int] = None) -> bool:
     if _RESULT_BEFORE.search(reply[max(0, start - 30):start]):
         return True
@@ -272,7 +306,12 @@ def extract_candidates(reply: str) -> list[Cand]:
     # number words only in result position (avoids "deux étapes" noise)
     for s, e, v in find_number_words(reply):
         if (_result_pos(reply, s, e) or v.denominator != 1
-                or re.search(r"\*\*\s*$", reply[max(0, s - 3):s])):
+                or re.search(r"\*\*\s*$", reply[max(0, s - 3):s])
+                or _short_answer(reply, s, e)):
+            cands.append(Cand(s, e, reply[s:e], v, "word", None, True))
+    # English number words: only when the sentence is a bare short answer
+    for s, e, v in find_number_words_en(reply):
+        if _result_pos(reply, s, e) or _short_answer(reply, s, e):
             cands.append(Cand(s, e, reply[s:e], v, "word", None, True))
     return cands
 
