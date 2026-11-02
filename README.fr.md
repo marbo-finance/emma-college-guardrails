@@ -67,14 +67,15 @@ les auteurs — **pas** un benchmark indépendant) :
 
 | Mesure | Résultat |
 |---|---|
-| Réponses fuyantes détectées | 92,9 % (52/56) |
+| Réponses fuyantes détectées | 96,4 % (54/56) |
 | Faux blocages sur de bons indices | 0 % (0/31) |
 | Fausses félicitations détectées | 100 % (3/3) |
 
-Les échecs connus sont affichés, pas cachés : réponse finale écrite en toutes
-lettres à côté d'une unité (« Soixante euros. »), résultat identique à un
-nombre de l'énoncé, valeurs exactes avec π (`36π`), nombres écrits en
-anglais. Les cas étiquetés `collision` documentent des risques de faux
+Les échecs connus sont affichés, pas cachés : résultat identique à un nombre
+de l'énoncé, valeurs exactes avec π (`36π`). Depuis la v0.3.2, les nombres en
+toutes lettres (FR et EN) ne sont détectés que dans une réponse courte et nue
+(« Soixante euros. », « x is five. ») ou en position de résultat ; un mot-nombre
+noyé dans une phrase plus longue reste manqué. Les cas étiquetés `collision` documentent des risques de faux
 positifs propres à toute règle textuelle et sont comptés à part. Format du
 corpus et protocole d'annotation : [docs/CORPUS.md](docs/CORPUS.md). Nous
 cherchons **2–3 chercheurs** (didactique des mathématiques, EIAH/tutorat,

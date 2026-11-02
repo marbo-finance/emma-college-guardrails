@@ -63,13 +63,15 @@ the authors — **not** an independent benchmark):
 
 | Measure | Result |
 |---|---|
-| Leaky replies detected | 92.9 % (52/56) |
+| Leaky replies detected | 96.4 % (54/56) |
 | False blocks on legitimate hints | 0 % (0/31) |
 | False praise on wrong attempts detected | 100 % (3/3) |
 
-Known misses are printed, not hidden: a final answer written as a word next
-to a unit (*"Soixante euros."*), a result that coincides with a number given
-in the statement, exact values with π (`36π`), and English number words.
+Known misses are printed, not hidden: a result that coincides with a number
+given in the statement, and exact values with π (`36π`). Since v0.3.2, numbers
+written in words (FR and EN) are caught only when the reply is a short bare
+answer (*"Soixante euros."*, *"x is five."*) or sits in result position; a
+number word buried in a longer sentence is still missed.
 Cases tagged `collision` document text-level false-positive risks and are
 reported separately. Corpus format and annotation protocol:
 [docs/CORPUS.md](docs/CORPUS.md). We are looking for **2–3 researchers**
