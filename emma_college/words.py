@@ -150,3 +150,93 @@ def find_number_words(text: str):
             continue  # bare article, not a number
         out.append((s, span_end, frac))
     return out
+
+
+# ---------------------------------------------------------------------------
+# English number words (integers 0 .. 999 999)
+# ---------------------------------------------------------------------------
+
+_EN_UNITS = {
+    "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
+    "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12,
+    "thirteen": 13, "fourteen": 14, "fifteen": 15, "sixteen": 16,
+    "seventeen": 17, "eighteen": 18, "nineteen": 19,
+}
+_EN_TENS = {"twenty": 20, "thirty": 30, "forty": 40, "fifty": 50,
+            "sixty": 60, "seventy": 70, "eighty": 80, "ninety": 90}
+
+
+def _en_atoms(token: str):
+    atoms = []
+    for part in token.lower().split("-"):
+        if part in _EN_UNITS or part in _EN_TENS or part in ("hundred", "thousand", "and"):
+            atoms.append(part)
+        else:
+            return None
+    return atoms
+
+
+def _en_value(atoms: list[str]) -> int | None:
+    seq = [a for a in atoms if a != "and"]
+    if not seq:
+        return None
+    total, cur = 0, 0
+    for a in seq:
+        if a in _EN_UNITS:
+            cur += _EN_UNITS[a]
+        elif a in _EN_TENS:
+            cur += _EN_TENS[a]
+        elif a == "hundred":
+            cur = (cur or 1) * 100
+        else:  # thousand
+            total += (cur or 1) * 1000
+            cur = 0
+    return total + cur
+
+
+def find_number_words_en(text: str):
+    """Yield (start, end, Fraction) for English integer number words in ``text``.
+
+    "and" only joins after "hundred"/"thousand" ("two hundred and five");
+    "two and three" is two separate numbers."""
+    tokens = [(m.start(), m.end(), m.group()) for m in _WORD_RE.finditer(text)]
+    out = []
+    i = 0
+    while i < len(tokens):
+        s, e, tok = tokens[i]
+        atoms = _en_atoms(tok)
+        if atoms is None or "and" in atoms:
+            i += 1
+            continue
+        j = i
+        chain = list(atoms)
+        end = e
+        while j + 1 < len(tokens):
+            ns, ne, nt = tokens[j + 1]
+            if text[end:ns].strip() != "":
+                break
+            na = _en_atoms(nt)
+            if na is None:
+                break
+            if na == ["and"]:
+                # "and" joins only after hundred/thousand, before another number word
+                if chain[-1] not in ("hundred", "thousand") or j + 2 >= len(tokens):
+                    break
+                ms, me, mt = tokens[j + 2]
+                ma = _en_atoms(mt)
+                if ma is None or "and" in ma or text[ne:ms].strip() != "":
+                    break
+                chain += ["and"] + ma
+                end = me
+                j += 2
+                continue
+            if "and" in na:
+                break
+            chain += na
+            end = ne
+            j += 1
+        i = j + 1
+        val = _en_value(chain)
+        if val is not None:
+            out.append((s, end, Fraction(val)))
+    return out
